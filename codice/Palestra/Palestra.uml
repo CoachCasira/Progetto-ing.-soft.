@@ -391,14 +391,48 @@
     <packagedElement xmi:type="uml:UseCase" xmi:id="_IVHgwL2bEfCE-siqO9X8wA" name="prenotaConsulenza">
       <include xmi:type="uml:Include" xmi:id="_nlsAsL2bEfCE-siqO9X8wA" addition="_1FPoAL2ZEfCE-siqO9X8wA"/>
     </packagedElement>
-    <packagedElement xmi:type="uml:UseCase" xmi:id="_V4XqYL2bEfCE-siqO9X8wA" name="Dieta">
+    <packagedElement xmi:type="uml:UseCase" xmi:id="_V4XqYL2bEfCE-siqO9X8wA" name="scriveDieta">
       <generalization xmi:type="uml:Generalization" xmi:id="_gNAi8L2bEfCE-siqO9X8wA" general="_IVHgwL2bEfCE-siqO9X8wA"/>
     </packagedElement>
-    <packagedElement xmi:type="uml:UseCase" xmi:id="_af-HoL2bEfCE-siqO9X8wA" name="SchedaAllenamento">
+    <packagedElement xmi:type="uml:UseCase" xmi:id="_af-HoL2bEfCE-siqO9X8wA" name="scriveSchedaAllenamento">
       <generalization xmi:type="uml:Generalization" xmi:id="_fNY5AL2bEfCE-siqO9X8wA" general="_IVHgwL2bEfCE-siqO9X8wA"/>
     </packagedElement>
-    <packagedElement xmi:type="uml:UseCase" xmi:id="_dbs48L2bEfCE-siqO9X8wA" name="corso">
+    <packagedElement xmi:type="uml:UseCase" xmi:id="_dbs48L2bEfCE-siqO9X8wA" name="creaCorso">
       <generalization xmi:type="uml:Generalization" xmi:id="_fpzvQL2bEfCE-siqO9X8wA" general="_IVHgwL2bEfCE-siqO9X8wA"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:UseCase" xmi:id="_eXgdwMFoEfC8FKSr8wLufw" name="verificaMacchinarioLibero">
+      <include xmi:type="uml:Include" xmi:id="_iZ58MMFoEfC8FKSr8wLufw" addition="_1FPoAL2ZEfCE-siqO9X8wA"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:UseCase" xmi:id="_-T4TwMFoEfC8FKSr8wLufw" name="verificaArmadiettiLiberi">
+      <include xmi:type="uml:Include" xmi:id="_Bc1BsMFpEfC8FKSr8wLufw" addition="_1FPoAL2ZEfCE-siqO9X8wA"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:UseCase" xmi:id="_MLoGsMFpEfC8FKSr8wLufw" name="rilasciaDocumento">
+      <include xmi:type="uml:Include" xmi:id="_RAJloMFpEfC8FKSr8wLufw" addition="_IVHgwL2bEfCE-siqO9X8wA"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:UseCase" xmi:id="_Ij_cMMFqEfC8FKSr8wLufw" name="verificaDisponibilitaSala"/>
+    <packagedElement xmi:type="uml:UseCase" xmi:id="_th_ZAMFqEfC8FKSr8wLufw" name="prenotaSala"/>
+    <packagedElement xmi:type="uml:UseCase" xmi:id="_0HxaMMFqEfC8FKSr8wLufw" name="liberaSala"/>
+    <packagedElement xmi:type="uml:UseCase" xmi:id="_FuG-wMFrEfC8FKSr8wLufw" name="ospitaCorso"/>
+    <packagedElement xmi:type="uml:UseCase" xmi:id="_t7H1QMFrEfC8FKSr8wLufw" name="sottoscriveAbbonamento">
+      <include xmi:type="uml:Include" xmi:id="_E3SPAMFsEfC8FKSr8wLufw" addition="_yNd0MMFrEfC8FKSr8wLufw"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:UseCase" xmi:id="_yNd0MMFrEfC8FKSr8wLufw" name="pagaAbbonamento"/>
+    <packagedElement xmi:type="uml:UseCase" xmi:id="_NL8z4MFsEfC8FKSr8wLufw" name="sottoscriveAbbBase">
+      <generalization xmi:type="uml:Generalization" xmi:id="_ddzRwMFsEfC8FKSr8wLufw" general="_t7H1QMFrEfC8FKSr8wLufw"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:UseCase" xmi:id="_PWCF0MFsEfC8FKSr8wLufw" name="sottoscriveAbbCompleto">
+      <generalization xmi:type="uml:Generalization" xmi:id="_dCDw8MFsEfC8FKSr8wLufw" general="_t7H1QMFrEfC8FKSr8wLufw"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:UseCase" xmi:id="_R6auIMFsEfC8FKSr8wLufw" name="sottoscriveAbbCorsi">
+      <generalization xmi:type="uml:Generalization" xmi:id="_cjzusMFsEfC8FKSr8wLufw" general="_t7H1QMFrEfC8FKSr8wLufw"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:UseCase" xmi:id="_lZR6kMFsEfC8FKSr8wLufw" name="sospendiAbbonamento">
+      <extensionPoint xmi:type="uml:ExtensionPoint" xmi:id="_HwKEIMFtEfC8FKSr8wLufw" name="ExtensionPoint1"/>
+      <include xmi:type="uml:Include" xmi:id="_3jAOIMFuEfC8FKSr8wLufw" addition="_t7H1QMFrEfC8FKSr8wLufw"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:UseCase" xmi:id="_nLzoIMFsEfC8FKSr8wLufw" name="rinnovaAbbonamento">
+      <extensionPoint xmi:type="uml:ExtensionPoint" xmi:id="_IdqqYcFtEfC8FKSr8wLufw" name="ExtensionPoint1"/>
+      <include xmi:type="uml:Include" xmi:id="_2_bnAMFuEfC8FKSr8wLufw" addition="_t7H1QMFrEfC8FKSr8wLufw"/>
     </packagedElement>
   </packagedElement>
   <packagedElement xmi:type="uml:Actor" xmi:id="_ZfNgIL2ZEfCE-siqO9X8wA" name="Cliente"/>
@@ -456,6 +490,58 @@
     <ownedEnd xmi:type="uml:Property" xmi:id="_BjgMUr5GEfCSqKuEoYDsEg" name="applicazione" type="_0dPUILvpEfCTgdBXOi_fLA" association="_Bje-ML5GEfCSqKuEoYDsEg"/>
   </packagedElement>
   <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_ASfTkL5KEfCSqKuEoYDsEg" name="List"/>
+  <packagedElement xmi:type="uml:Association" xmi:id="_QAEosMFpEfC8FKSr8wLufw" memberEnd="_QAHsAMFpEfC8FKSr8wLufw _QAHsAcFpEfC8FKSr8wLufw">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_QAGd4MFpEfC8FKSr8wLufw" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_QAGd4cFpEfC8FKSr8wLufw" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_QAHsAMFpEfC8FKSr8wLufw" name="rilasciadocumento" type="_MLoGsMFpEfC8FKSr8wLufw" association="_QAEosMFpEfC8FKSr8wLufw"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_QAHsAcFpEfC8FKSr8wLufw" name="dipendente" type="_kG0_EL2ZEfCE-siqO9X8wA" association="_QAEosMFpEfC8FKSr8wLufw"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Actor" xmi:id="_6krBoMFpEfC8FKSr8wLufw" name="Sala"/>
+  <packagedElement xmi:type="uml:Actor" xmi:id="_8P83sMFpEfC8FKSr8wLufw" name="SalaPesi">
+    <generalization xmi:type="uml:Generalization" xmi:id="_ERMxUMFqEfC8FKSr8wLufw" general="_6krBoMFpEfC8FKSr8wLufw"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Actor" xmi:id="__dWn0MFpEfC8FKSr8wLufw" name="SalaCorsi">
+    <generalization xmi:type="uml:Generalization" xmi:id="_E_QKIMFqEfC8FKSr8wLufw" general="_6krBoMFpEfC8FKSr8wLufw"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Actor" xmi:id="_BWD14MFqEfC8FKSr8wLufw" name="Spa">
+    <generalization xmi:type="uml:Generalization" xmi:id="_GrV4gMFqEfC8FKSr8wLufw" general="_6krBoMFpEfC8FKSr8wLufw"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_LK7pQMFqEfC8FKSr8wLufw" memberEnd="_LK8QUsFqEfC8FKSr8wLufw _LK83YMFqEfC8FKSr8wLufw">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_LK8QUMFqEfC8FKSr8wLufw" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_LK8QUcFqEfC8FKSr8wLufw" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_LK8QUsFqEfC8FKSr8wLufw" name="verificadisponibilitasala" type="_Ij_cMMFqEfC8FKSr8wLufw" association="_LK7pQMFqEfC8FKSr8wLufw"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_LK83YMFqEfC8FKSr8wLufw" name="sala" type="_6krBoMFpEfC8FKSr8wLufw" association="_LK7pQMFqEfC8FKSr8wLufw"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_2h1B0MFqEfC8FKSr8wLufw" memberEnd="_2h1o4sFqEfC8FKSr8wLufw _2h1o48FqEfC8FKSr8wLufw">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_2h1o4MFqEfC8FKSr8wLufw" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_2h1o4cFqEfC8FKSr8wLufw" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_2h1o4sFqEfC8FKSr8wLufw" name="liberasala" type="_0HxaMMFqEfC8FKSr8wLufw" association="_2h1B0MFqEfC8FKSr8wLufw"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_2h1o48FqEfC8FKSr8wLufw" name="sala" type="_6krBoMFpEfC8FKSr8wLufw" association="_2h1B0MFqEfC8FKSr8wLufw"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_3HlaQMFqEfC8FKSr8wLufw" memberEnd="_3HmBUsFqEfC8FKSr8wLufw _3HmBU8FqEfC8FKSr8wLufw">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_3HmBUMFqEfC8FKSr8wLufw" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_3HmBUcFqEfC8FKSr8wLufw" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_3HmBUsFqEfC8FKSr8wLufw" name="prenotasala" type="_th_ZAMFqEfC8FKSr8wLufw" association="_3HlaQMFqEfC8FKSr8wLufw"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_3HmBU8FqEfC8FKSr8wLufw" name="sala" type="_6krBoMFpEfC8FKSr8wLufw" association="_3HlaQMFqEfC8FKSr8wLufw"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_J5L4EMFrEfC8FKSr8wLufw" memberEnd="_J5NGMcFrEfC8FKSr8wLufw _J5NGMsFrEfC8FKSr8wLufw">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_J5MfIMFrEfC8FKSr8wLufw" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_J5NGMMFrEfC8FKSr8wLufw" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_J5NGMcFrEfC8FKSr8wLufw" name="ospitacorso" type="_FuG-wMFrEfC8FKSr8wLufw" association="_J5L4EMFrEfC8FKSr8wLufw"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_J5NGMsFrEfC8FKSr8wLufw" name="salacorsi" type="__dWn0MFpEfC8FKSr8wLufw" association="_J5L4EMFrEfC8FKSr8wLufw"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_FfYw0MFsEfC8FKSr8wLufw" memberEnd="_FfamAcFsEfC8FKSr8wLufw _FfamAsFsEfC8FKSr8wLufw">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_FfZ-8MFsEfC8FKSr8wLufw" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_FfamAMFsEfC8FKSr8wLufw" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_FfamAcFsEfC8FKSr8wLufw" name="pagaabbonamento" type="_yNd0MMFrEfC8FKSr8wLufw" association="_FfYw0MFsEfC8FKSr8wLufw"/>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_FfamAsFsEfC8FKSr8wLufw" name="cliente" type="_ZfNgIL2ZEfCE-siqO9X8wA" association="_FfYw0MFsEfC8FKSr8wLufw"/>
+  </packagedElement>
   <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_WoZn0LvoEfCTgdBXOi_fLA">
     <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_Wod5QLvoEfCTgdBXOi_fLA" source="http://www.eclipse.org/uml2/2.0.0/UML">
       <references xmi:type="ecore:EPackage" href="pathmap://PAPYRUS_ACTIONLANGUAGE_PROFILE/ActionLanguage-Profile.profile.uml#_Kv8EIKFXEeS_KNX0nfvIVQ"/>
