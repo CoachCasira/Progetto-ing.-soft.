@@ -436,6 +436,19 @@
         <include xmi:type="uml:Include" xmi:id="_2_bnAMFuEfC8FKSr8wLufw" addition="_t7H1QMFrEfC8FKSr8wLufw"/>
       </packagedElement>
       <packagedElement xmi:type="uml:CallEvent" xmi:id="_wnQboMF8EfCyKOhvIabQqQ" name="sottoscriveAbbonamento"/>
+      <packagedElement xmi:type="uml:CallEvent" xmi:id="_MFGHMMI1EfCFx_0eToBuLQ" name="scaduto"/>
+      <packagedElement xmi:type="uml:CallEvent" xmi:id="_4bRLcMI1EfCFx_0eToBuLQ" name="scade"/>
+      <packagedElement xmi:type="uml:CallEvent" xmi:id="_oyVSQMI2EfCFx_0eToBuLQ" name="sceglieAbbonamento"/>
+      <packagedElement xmi:type="uml:CallEvent" xmi:id="_XkPjsMI4EfCFx_0eToBuLQ" name="entraCentroBenessere"/>
+      <packagedElement xmi:type="uml:CallEvent" xmi:id="_tJRycMI4EfCFx_0eToBuLQ" name="iniziaCorso"/>
+      <packagedElement xmi:type="uml:CallEvent" xmi:id="_GsdRwMI5EfCFx_0eToBuLQ" name="iniziaAllenamento"/>
+      <packagedElement xmi:type="uml:CallEvent" xmi:id="_p2IxQMI5EfCFx_0eToBuLQ" name="vuoleMacchinario"/>
+      <packagedElement xmi:type="uml:CallEvent" xmi:id="_Fn3y0MI6EfCFx_0eToBuLQ" name="finitoDiUsare"/>
+      <packagedElement xmi:type="uml:CallEvent" xmi:id="_GypucMI7EfCFx_0eToBuLQ" name="allenamentoFinito"/>
+      <packagedElement xmi:type="uml:CallEvent" xmi:id="_9Jg_EMI8EfCFx_0eToBuLQ" name="clienteSiVuoleAllenare"/>
+      <packagedElement xmi:type="uml:CallEvent" xmi:id="_thRCYMI9EfCFx_0eToBuLQ" name="finitoCentroBenessere"/>
+      <packagedElement xmi:type="uml:ChangeEvent" xmi:id="_hkvzwMJCEfCFx_0eToBuLQ" name="loginApp"/>
+      <packagedElement xmi:type="uml:CallEvent" xmi:id="_3jh_QMJCEfCFx_0eToBuLQ" name="clienteVuoleConsulenza"/>
     </packagedElement>
     <packagedElement xmi:type="uml:Actor" xmi:id="_ZfNgIL2ZEfCE-siqO9X8wA" name="Cliente"/>
     <packagedElement xmi:type="uml:Actor" xmi:id="_xT6O8L2aEfCE-siqO9X8wA" name="PersonalTrainer">
@@ -556,9 +569,142 @@
           </ownedRule>
           <trigger xmi:type="uml:Trigger" xmi:id="_qVnecMF8EfCyKOhvIabQqQ" name="sottoscriveAbbonamento" event="_wnQboMF8EfCyKOhvIabQqQ"/>
         </transition>
+        <transition xmi:type="uml:Transition" xmi:id="_B_zSMMI1EfCFx_0eToBuLQ" guard="_TfI24MI1EfCFx_0eToBuLQ" source="_NtpZcMFxEfCyKOhvIabQqQ" target="_NtpZcMFxEfCyKOhvIabQqQ">
+          <ownedRule xmi:type="uml:Constraint" xmi:id="_TfI24MI1EfCFx_0eToBuLQ" name="rinnova">
+            <specification xmi:type="uml:OpaqueExpression" xmi:id="_TfJd8MI1EfCFx_0eToBuLQ" name="rinnovato">
+              <language>java</language>
+              <body>rinnovato==true&#xD;
+</body>
+            </specification>
+          </ownedRule>
+          <trigger xmi:type="uml:Trigger" xmi:id="_FKklEMI1EfCFx_0eToBuLQ" name="scaduto" event="_MFGHMMI1EfCFx_0eToBuLQ"/>
+        </transition>
+        <transition xmi:type="uml:Transition" xmi:id="_xKRqEMI1EfCFx_0eToBuLQ" name="" guard="_DNCr8MI2EfCFx_0eToBuLQ" source="_NtpZcMFxEfCyKOhvIabQqQ" target="_BzvzQMFxEfCyKOhvIabQqQ">
+          <ownedRule xmi:type="uml:Constraint" xmi:id="_DNCr8MI2EfCFx_0eToBuLQ" name="">
+            <specification xmi:type="uml:OpaqueExpression" xmi:id="_DNDTAMI2EfCFx_0eToBuLQ" name="rinnovato">
+              <language>java</language>
+              <body>rinnovato==false</body>
+            </specification>
+          </ownedRule>
+          <trigger xmi:type="uml:Trigger" xmi:id="_0T2DEMI1EfCFx_0eToBuLQ" name="" event="_4bRLcMI1EfCFx_0eToBuLQ"/>
+        </transition>
+        <transition xmi:type="uml:Transition" xmi:id="_hLZWEMI2EfCFx_0eToBuLQ" source="_NtpZcMFxEfCyKOhvIabQqQ" target="_aR8K8MI2EfCFx_0eToBuLQ">
+          <trigger xmi:type="uml:Trigger" xmi:id="_lD1AMMI2EfCFx_0eToBuLQ" name="" event="_oyVSQMI2EfCFx_0eToBuLQ"/>
+        </transition>
+        <transition xmi:type="uml:Transition" xmi:id="_G6D60MI3EfCFx_0eToBuLQ" guard="_Mc9isMI3EfCFx_0eToBuLQ" source="_aR8K8MI2EfCFx_0eToBuLQ" target="_ERt_kMI3EfCFx_0eToBuLQ">
+          <ownedRule xmi:type="uml:Constraint" xmi:id="_Mc9isMI3EfCFx_0eToBuLQ" name="tipo">
+            <specification xmi:type="uml:OpaqueExpression" xmi:id="_Mc-w0MI3EfCFx_0eToBuLQ" name="tipo">
+              <language>java</language>
+              <body>tipo==completo</body>
+            </specification>
+          </ownedRule>
+        </transition>
+        <transition xmi:type="uml:Transition" xmi:id="_hfQ30MI3EfCFx_0eToBuLQ" guard="_mf0AkMI3EfCFx_0eToBuLQ" source="_aR8K8MI2EfCFx_0eToBuLQ" target="_BckXYMI3EfCFx_0eToBuLQ">
+          <ownedRule xmi:type="uml:Constraint" xmi:id="_mf0AkMI3EfCFx_0eToBuLQ" name="tipo">
+            <specification xmi:type="uml:OpaqueExpression" xmi:id="_mf0noMI3EfCFx_0eToBuLQ" name="tipo">
+              <language>java</language>
+              <body>tipo==corsi</body>
+            </specification>
+          </ownedRule>
+        </transition>
+        <transition xmi:type="uml:Transition" xmi:id="_wU4BMMI3EfCFx_0eToBuLQ" guard="_yyU7EMI3EfCFx_0eToBuLQ" source="_aR8K8MI2EfCFx_0eToBuLQ" target="_43ew4MI2EfCFx_0eToBuLQ">
+          <ownedRule xmi:type="uml:Constraint" xmi:id="_yyU7EMI3EfCFx_0eToBuLQ" name="tipo">
+            <specification xmi:type="uml:OpaqueExpression" xmi:id="_yyViIMI3EfCFx_0eToBuLQ" name="tipo">
+              <language>java</language>
+              <body>tipo==base&#xD;
+</body>
+            </specification>
+          </ownedRule>
+        </transition>
+        <transition xmi:type="uml:Transition" xmi:id="_MPi8UMI4EfCFx_0eToBuLQ" source="_ERt_kMI3EfCFx_0eToBuLQ" target="_KVRA8MI4EfCFx_0eToBuLQ">
+          <trigger xmi:type="uml:Trigger" xmi:id="_NYPCsMI4EfCFx_0eToBuLQ" name="entraCentroBenessere" event="_XkPjsMI4EfCFx_0eToBuLQ"/>
+        </transition>
+        <transition xmi:type="uml:Transition" xmi:id="_ouiFcMI4EfCFx_0eToBuLQ" source="_BckXYMI3EfCFx_0eToBuLQ" target="_hAIPUMI4EfCFx_0eToBuLQ">
+          <trigger xmi:type="uml:Trigger" xmi:id="_p6DdYMI4EfCFx_0eToBuLQ" name="iniziaCorso" event="_tJRycMI4EfCFx_0eToBuLQ"/>
+        </transition>
+        <transition xmi:type="uml:Transition" xmi:id="_vcr_gMI4EfCFx_0eToBuLQ" source="_43ew4MI2EfCFx_0eToBuLQ" target="_htSQQMI4EfCFx_0eToBuLQ">
+          <trigger xmi:type="uml:Trigger" xmi:id="_ErOZ0MI5EfCFx_0eToBuLQ" name="iniziaAllenamento" event="_GsdRwMI5EfCFx_0eToBuLQ"/>
+        </transition>
+        <transition xmi:type="uml:Transition" xmi:id="_khDi8MI5EfCFx_0eToBuLQ" guard="_wbRSMMI5EfCFx_0eToBuLQ" source="_htSQQMI4EfCFx_0eToBuLQ" target="_gqCOEMI5EfCFx_0eToBuLQ">
+          <ownedRule xmi:type="uml:Constraint" xmi:id="_wbRSMMI5EfCFx_0eToBuLQ" name="libero">
+            <specification xmi:type="uml:OpaqueExpression" xmi:id="_wbR5QMI5EfCFx_0eToBuLQ" name="constraintSpec">
+              <language>java</language>
+              <body>libero==true</body>
+            </specification>
+          </ownedRule>
+          <effect xmi:type="uml:Activity" xmi:id="_OrLmYMI6EfCFx_0eToBuLQ" name="libero==false"/>
+          <trigger xmi:type="uml:Trigger" xmi:id="_lNfLIMI5EfCFx_0eToBuLQ" name="vuoleMacchinario" event="_p2IxQMI5EfCFx_0eToBuLQ"/>
+        </transition>
+        <transition xmi:type="uml:Transition" xmi:id="_BvUz8MI6EfCFx_0eToBuLQ" source="_gqCOEMI5EfCFx_0eToBuLQ" target="_htSQQMI4EfCFx_0eToBuLQ">
+          <effect xmi:type="uml:Activity" xmi:id="_JAiXwMI6EfCFx_0eToBuLQ" name="libero==true"/>
+          <trigger xmi:type="uml:Trigger" xmi:id="_CTNkIMI6EfCFx_0eToBuLQ" name="finitoDiUsare" event="_Fn3y0MI6EfCFx_0eToBuLQ"/>
+        </transition>
+        <transition xmi:type="uml:Transition" xmi:id="_BWnjkMI7EfCFx_0eToBuLQ" source="_gqCOEMI5EfCFx_0eToBuLQ" target="__DgRcMI6EfCFx_0eToBuLQ">
+          <trigger xmi:type="uml:Trigger" xmi:id="_Cy3fIMI7EfCFx_0eToBuLQ" name="allenamentoFinito" event="_GypucMI7EfCFx_0eToBuLQ"/>
+        </transition>
+        <transition xmi:type="uml:Transition" xmi:id="_NZpQkMI7EfCFx_0eToBuLQ" source="__DgRcMI6EfCFx_0eToBuLQ" target="_KvQt8MI7EfCFx_0eToBuLQ"/>
+        <transition xmi:type="uml:Transition" xmi:id="_TneEwMI7EfCFx_0eToBuLQ" source="_KVRA8MI4EfCFx_0eToBuLQ" target="_RCeYcMI7EfCFx_0eToBuLQ"/>
+        <transition xmi:type="uml:Transition" xmi:id="_oO6p4MI7EfCFx_0eToBuLQ" source="_hAIPUMI4EfCFx_0eToBuLQ" target="_lim0oMI7EfCFx_0eToBuLQ"/>
+        <transition xmi:type="uml:Transition" xmi:id="_wZSqUMI7EfCFx_0eToBuLQ" source="_lim0oMI7EfCFx_0eToBuLQ" target="_s174UMI7EfCFx_0eToBuLQ"/>
+        <transition xmi:type="uml:Transition" xmi:id="_1AbNgMI7EfCFx_0eToBuLQ" source="_lim0oMI7EfCFx_0eToBuLQ" target="_xbNaUMI7EfCFx_0eToBuLQ"/>
+        <transition xmi:type="uml:Transition" xmi:id="_JG-sEMI8EfCFx_0eToBuLQ" source="_xbNaUMI7EfCFx_0eToBuLQ" target="_8d3PcMI7EfCFx_0eToBuLQ"/>
+        <transition xmi:type="uml:Transition" xmi:id="_J2UeUMI8EfCFx_0eToBuLQ" source="_s174UMI7EfCFx_0eToBuLQ" target="_8d3PcMI7EfCFx_0eToBuLQ"/>
+        <transition xmi:type="uml:Transition" xmi:id="_N6Q04MI8EfCFx_0eToBuLQ" source="_8d3PcMI7EfCFx_0eToBuLQ" target="_KyTlcMI8EfCFx_0eToBuLQ"/>
+        <transition xmi:type="uml:Transition" xmi:id="_f5GZAMI8EfCFx_0eToBuLQ" source="_KyTlcMI8EfCFx_0eToBuLQ" target="_RBV6kMI8EfCFx_0eToBuLQ"/>
+        <transition xmi:type="uml:Transition" xmi:id="_1Zaf0MI8EfCFx_0eToBuLQ" source="_ERt_kMI3EfCFx_0eToBuLQ" target="_htSQQMI4EfCFx_0eToBuLQ">
+          <trigger xmi:type="uml:Trigger" xmi:id="_2RewQMI8EfCFx_0eToBuLQ" name="clienteSiVuoleAllenare" event="_9Jg_EMI8EfCFx_0eToBuLQ"/>
+        </transition>
+        <transition xmi:type="uml:Transition" xmi:id="_L7YQ4MI9EfCFx_0eToBuLQ" source="_KVRA8MI4EfCFx_0eToBuLQ" target="_ERt_kMI3EfCFx_0eToBuLQ">
+          <trigger xmi:type="uml:Trigger" xmi:id="_gKToUMI9EfCFx_0eToBuLQ" name="finitoCentroBenessere" event="_thRCYMI9EfCFx_0eToBuLQ"/>
+        </transition>
+        <transition xmi:type="uml:Transition" xmi:id="_YqEUkMI-EfCFx_0eToBuLQ" name="loginApp" source="_NtpZcMFxEfCyKOhvIabQqQ" target="_9DfaIMI9EfCFx_0eToBuLQ">
+          <trigger xmi:type="uml:Trigger" xmi:id="_fGrO0MJCEfCFx_0eToBuLQ" name="loginApp" event="_hkvzwMJCEfCFx_0eToBuLQ"/>
+        </transition>
+        <transition xmi:type="uml:Transition" xmi:id="_ivY-wMI-EfCFx_0eToBuLQ" source="_9DfaIMI9EfCFx_0eToBuLQ" target="_BHRb0MJCEfCFx_0eToBuLQ"/>
+        <transition xmi:type="uml:Transition" xmi:id="_wOfoMMI-EfCFx_0eToBuLQ" source="_fhPAsMI-EfCFx_0eToBuLQ" target="_sPgqIMI-EfCFx_0eToBuLQ"/>
+        <transition xmi:type="uml:Transition" xmi:id="_kXERwMI_EfCFx_0eToBuLQ" source="_sPgqIMI-EfCFx_0eToBuLQ" target="_yqr90MI-EfCFx_0eToBuLQ"/>
+        <transition xmi:type="uml:Transition" xmi:id="_lCrakMI_EfCFx_0eToBuLQ" source="_sPgqIMI-EfCFx_0eToBuLQ" target="_O8AeYMI_EfCFx_0eToBuLQ"/>
+        <transition xmi:type="uml:Transition" xmi:id="_lz8fcMI_EfCFx_0eToBuLQ" source="_sPgqIMI-EfCFx_0eToBuLQ" target="_b4tlYMI_EfCFx_0eToBuLQ"/>
+        <transition xmi:type="uml:Transition" xmi:id="_eThwEMJBEfCFx_0eToBuLQ" source="_O8AeYMI_EfCFx_0eToBuLQ" target="_btjMUMJBEfCFx_0eToBuLQ"/>
+        <transition xmi:type="uml:Transition" xmi:id="_e5La0MJBEfCFx_0eToBuLQ" source="_b4tlYMI_EfCFx_0eToBuLQ" target="_btjMUMJBEfCFx_0eToBuLQ"/>
+        <transition xmi:type="uml:Transition" xmi:id="_g5wygMJBEfCFx_0eToBuLQ" source="_btjMUMJBEfCFx_0eToBuLQ" target="_BHRb0MJCEfCFx_0eToBuLQ">
+          <effect xmi:type="uml:Activity" xmi:id="_xngiMMJBEfCFx_0eToBuLQ" name="riceveDocumento"/>
+        </transition>
+        <transition xmi:type="uml:Transition" xmi:id="_y254EMJCEfCFx_0eToBuLQ" name="" source="_BHRb0MJCEfCFx_0eToBuLQ" target="_fhPAsMI-EfCFx_0eToBuLQ">
+          <trigger xmi:type="uml:Trigger" xmi:id="_0HOQcMJCEfCFx_0eToBuLQ" name="clienteVuoleConsulenza" event="_3jh_QMJCEfCFx_0eToBuLQ"/>
+        </transition>
+        <transition xmi:type="uml:Transition" xmi:id="_IL6t0MJDEfCFx_0eToBuLQ" source="_BHRb0MJCEfCFx_0eToBuLQ" target="_NtpZcMFxEfCyKOhvIabQqQ"/>
+        <transition xmi:type="uml:Transition" xmi:id="_OD2KgMJDEfCFx_0eToBuLQ" source="_yqr90MI-EfCFx_0eToBuLQ" target="_btjMUMJBEfCFx_0eToBuLQ"/>
         <subvertex xmi:type="uml:Pseudostate" xmi:id="_5Lu0kMFwEfCyKOhvIabQqQ" name="inizio"/>
         <subvertex xmi:type="uml:State" xmi:id="_BzvzQMFxEfCyKOhvIabQqQ" name="clienteNonAbbonato"/>
         <subvertex xmi:type="uml:State" xmi:id="_NtpZcMFxEfCyKOhvIabQqQ" name="clienteAbbonato"/>
+        <subvertex xmi:type="uml:Pseudostate" xmi:id="_aR8K8MI2EfCFx_0eToBuLQ" name="sceltaAbbonamento" kind="choice"/>
+        <subvertex xmi:type="uml:State" xmi:id="_43ew4MI2EfCFx_0eToBuLQ" name="clienteAbbonatoBase"/>
+        <subvertex xmi:type="uml:State" xmi:id="_BckXYMI3EfCFx_0eToBuLQ" name="clienteAbbonatoPerCorsi"/>
+        <subvertex xmi:type="uml:State" xmi:id="_ERt_kMI3EfCFx_0eToBuLQ" name="clienteAbbonatoCompleto"/>
+        <subvertex xmi:type="uml:State" xmi:id="_KVRA8MI4EfCFx_0eToBuLQ" name="clienteInSpa"/>
+        <subvertex xmi:type="uml:State" xmi:id="_hAIPUMI4EfCFx_0eToBuLQ" name="clienteInSalaCorsi"/>
+        <subvertex xmi:type="uml:State" xmi:id="_htSQQMI4EfCFx_0eToBuLQ" name="clienteInSalaPesi"/>
+        <subvertex xmi:type="uml:State" xmi:id="_gqCOEMI5EfCFx_0eToBuLQ" name="clienteUsaMacchinario"/>
+        <subvertex xmi:type="uml:State" xmi:id="__DgRcMI6EfCFx_0eToBuLQ" name="clientiInSpogliatoio"/>
+        <subvertex xmi:type="uml:FinalState" xmi:id="_KvQt8MI7EfCFx_0eToBuLQ" name="clienteEsceDaPalestra"/>
+        <subvertex xmi:type="uml:FinalState" xmi:id="_RCeYcMI7EfCFx_0eToBuLQ" name="clienteEsceDaCentroBenessere"/>
+        <subvertex xmi:type="uml:Pseudostate" xmi:id="_lim0oMI7EfCFx_0eToBuLQ" name="" kind="fork"/>
+        <subvertex xmi:type="uml:State" xmi:id="_s174UMI7EfCFx_0eToBuLQ" name="clienteSegueCorso"/>
+        <subvertex xmi:type="uml:State" xmi:id="_xbNaUMI7EfCFx_0eToBuLQ" name="clienteAscoltaMusica"/>
+        <subvertex xmi:type="uml:Pseudostate" xmi:id="_8d3PcMI7EfCFx_0eToBuLQ" name="" kind="join"/>
+        <subvertex xmi:type="uml:State" xmi:id="_KyTlcMI8EfCFx_0eToBuLQ" name="clienteHaFinitoCorso"/>
+        <subvertex xmi:type="uml:FinalState" xmi:id="_RBV6kMI8EfCFx_0eToBuLQ" name="clienteVaACasa"/>
+        <subvertex xmi:type="uml:State" xmi:id="_9DfaIMI9EfCFx_0eToBuLQ" name="clienteInstallaApplicazione">
+          <entry xmi:type="uml:Activity" xmi:id="_A89mEMI-EfCFx_0eToBuLQ" name="inserire username e password"/>
+        </subvertex>
+        <subvertex xmi:type="uml:State" xmi:id="_fhPAsMI-EfCFx_0eToBuLQ" name="clientePrenotaConsulenza"/>
+        <subvertex xmi:type="uml:Pseudostate" xmi:id="_sPgqIMI-EfCFx_0eToBuLQ" name="sceltaTipoConsulenza" kind="choice"/>
+        <subvertex xmi:type="uml:State" xmi:id="_yqr90MI-EfCFx_0eToBuLQ" name="clienteInConsulenzaConNutrizionista"/>
+        <subvertex xmi:type="uml:State" xmi:id="_O8AeYMI_EfCFx_0eToBuLQ" name="clienteInConsulenzaConPersonalTrainer"/>
+        <subvertex xmi:type="uml:State" xmi:id="_b4tlYMI_EfCFx_0eToBuLQ" name="clienteInConsulenzaConIstruttoreCorsi"/>
+        <subvertex xmi:type="uml:Pseudostate" xmi:id="_btjMUMJBEfCFx_0eToBuLQ" name="consulenzaFinita" kind="join"/>
+        <subvertex xmi:type="uml:State" xmi:id="_BHRb0MJCEfCFx_0eToBuLQ" name="clienteConApplicazione"/>
       </region>
     </packagedElement>
     <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_WoZn0LvoEfCTgdBXOi_fLA">
@@ -575,6 +721,5 @@
     </profileApplication>
   </uml:Model>
   <Codegen:GeneratorHint xmi:id="_cg_qAMIWEfCGINuBEXckLQ" base_Element="_Taj6MLvlEfCTgdBXOi_fLA" generatorID="Standard Java">
-    <language xmi:type="Codegen:Language" href="pathmap://Codegen_PROFILES/languages.uml#_2Zt6YCjREeayco6FJ_OtTQ"/>
-  </Codegen:GeneratorHint>
+    <language xmi:type="Codegen:Language" href="pathmap://Codegen_PROFILES/languages.uml#_2Zt6YCjREeayco6FJ_OtTQ"/></Codegen:GeneratorHint>
 </xmi:XMI>
