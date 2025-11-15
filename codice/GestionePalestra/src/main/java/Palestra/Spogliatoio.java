@@ -12,15 +12,15 @@ public class Spogliatoio {
 	/**
 	 * 
 	 */
-	public int numArmadietti;
+	private int numArmadietti;
 	/**
 	 * 
 	 */
-	public int numDocce;
+	private int numDocce;
 	/**
 	 * 
 	 */
-	public int numArmadiettiLiberi;
+	private int numArmadiettiLiberi;
 
 	/**
 	 * 

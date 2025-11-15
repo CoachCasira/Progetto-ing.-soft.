@@ -12,19 +12,19 @@ public class Macchinario {
 	/**
 	 * 
 	 */
-	public String marca;
+	private String marca;
 	/**
 	 * 
 	 */
-	public boolean occupato;
+	private boolean occupato;
 	/**
 	 * 
 	 */
-	public int capacitàCarico;
+	private int capacitàCarico;
 	/**
 	 * 
 	 */
-	public String nome;
+	private String nome;
 
 	/**
 	 * 

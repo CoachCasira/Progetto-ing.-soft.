@@ -707,6 +707,7 @@
         <subvertex xmi:type="uml:State" xmi:id="_BHRb0MJCEfCFx_0eToBuLQ" name="clienteConApplicazione"/>
       </region>
     </packagedElement>
+    <packagedElement xmi:type="uml:Interaction" xmi:id="_p-eO4MIuEfCgxNVTCLIVBQ" name="Plaestra:Login"/>
     <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_WoZn0LvoEfCTgdBXOi_fLA">
       <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_Wod5QLvoEfCTgdBXOi_fLA" source="http://www.eclipse.org/uml2/2.0.0/UML">
         <references xmi:type="ecore:EPackage" href="pathmap://PAPYRUS_ACTIONLANGUAGE_PROFILE/ActionLanguage-Profile.profile.uml#_Kv8EIKFXEeS_KNX0nfvIVQ"/>

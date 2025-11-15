@@ -4,6 +4,8 @@
 
 package Palestra;
 
+import java.util.ArrayList;
+
 /************************************************************/
 /**
  * 
@@ -12,47 +14,44 @@ public class Corso {
 	/**
 	 * 
 	 */
-	public class Class1 {
-	};
 
 	/**
 	 * 
 	 */
-	public String tipo;
+	private String tipo;
 	/**
 	 * 
 	 */
-	public String durata;
+	private String durata;
 	/**
 	 * 
 	 */
-	public String idCorso;
+	private String idCorso;
 	/**
 	 * 
 	 */
-	public boolean richiedePrenotazione;
+	private boolean richiedePrenotazione;
 	/**
 	 * 
 	 */
-	public IstruttoreCorso istruttorecorso;
+	private IstruttoreCorso istruttore;
 	/**
 	 * 
 	 */
-	public IstruttoreCorso istruttore;
 	/**
 	 * 
 	 */
-	public Cliente partecipanti;
+	private ArrayList<Cliente> partecipanti;
 
 	/**
 	 * 
 	 */
-	public void aggiungiPartecipante() {
+	public void aggiungiPartecipante(Cliente c) {
 	}
 
 	/**
 	 * 
 	 */
-	public void rimuoviPartecipante() {
+	public void rimuoviPartecipante(Cliente c) {
 	}
 }

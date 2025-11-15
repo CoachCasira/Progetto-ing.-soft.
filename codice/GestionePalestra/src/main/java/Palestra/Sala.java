@@ -9,4 +9,23 @@ package Palestra;
  * 
  */
 public class Sala {
+	
+	private String orariApertura;
+	private int capienza;
+	private boolean disponibilita;
+	
+	
+	public boolean verificaDisponibilità() {
+		
+		return true;
+	}
+	
+	public void prenotaSala() {
+		
+	}
+	
+	public void liberaSala() {
+		
+	}
+	
 }

@@ -9,4 +9,8 @@ package Palestra;
  * 
  */
 public class SalaCorsi extends Sala {
+	
+	
+	private int idSala;
+	private String orarioCorso;
 }

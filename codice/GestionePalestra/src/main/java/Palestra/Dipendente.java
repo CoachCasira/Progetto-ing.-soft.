@@ -9,4 +9,15 @@ package Palestra;
  * 
  */
 public abstract class Dipendente {
+	private String cognome;
+	private String nome;
+	private String idDipedente;
+	private String orarioDisponibilità;
+	
+	public String  rialscioDocumento(Cliente cliente) {
+		return null;
+	}
+	public void consultaAgenda() {
+		
+	}
 }

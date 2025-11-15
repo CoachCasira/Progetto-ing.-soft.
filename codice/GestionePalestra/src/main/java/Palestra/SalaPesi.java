@@ -9,4 +9,11 @@ package Palestra;
  * 
  */
 public class SalaPesi extends Sala {
+	
+	private int idSala;
+	private int metraura;
+	private int numMacchinari;
+	private int numPanche;
+	private int numPesiLiberi;
+	
 }

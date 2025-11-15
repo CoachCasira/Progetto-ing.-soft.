@@ -9,4 +9,10 @@ package Palestra;
  * 
  */
 public class Nutrizionista extends Dipendente {
+	
+	private String parcella;
+	
+	public String creaPianoAlimentare() {
+		 return null;
+	}
 }

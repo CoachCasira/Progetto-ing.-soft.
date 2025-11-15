@@ -12,8 +12,8 @@ public class IstruttoreCorso extends Dipendente {
 	/**
 	 * 
 	 */
-	public String tipoCorsoInsegnato;
-	public Corso corso;
+	private String tipoCorsoInsegnato;
+	private Corso corso;
 
 	/**
 	 * 

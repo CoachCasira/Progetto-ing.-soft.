@@ -12,15 +12,15 @@ public class Applicazione {
 	/**
 	 * 
 	 */
-	public String tipoAbbondamento;
+	private String tipoAbbondamento;
 	/**
 	 * 
 	 */
-	public Cliente clienti;
+	private Cliente clienti;
 	/**
 	 * 
 	 */
-	public Dipendente dipendente;
+	private Dipendente dipendente;
 
 	/**
 	 * 

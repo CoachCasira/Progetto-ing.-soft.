@@ -12,9 +12,9 @@ public class abbonamentoBasico extends Abbonamento {
 	/**
 	 * 
 	 */
-	public SalaPesi salapesi;
+	private SalaPesi salapesi;
 	/**
 	 * 
 	 */
-	public int limiteIngressiMensili;
+	private int limiteIngressiMensili;
 }

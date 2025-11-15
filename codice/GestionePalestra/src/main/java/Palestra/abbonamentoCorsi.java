@@ -12,11 +12,11 @@ public class abbonamentoCorsi extends Abbonamento {
 	/**
 	 * 
 	 */
-	public SalaCorsi[] salacorsi;
+	private SalaCorsi salacorsi;
 	/**
 	 * 
 	 */
-	public int numCorsiInclusi;
+	private int numCorsiInclusi;
 
 	/**
 	 * 

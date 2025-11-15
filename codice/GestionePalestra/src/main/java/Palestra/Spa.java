@@ -9,4 +9,7 @@ package Palestra;
  * 
  */
 public class Spa extends Sala {
+	
+	private int numSaune;
+	private int numPiscine;
 }

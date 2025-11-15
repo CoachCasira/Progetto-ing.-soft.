@@ -12,9 +12,9 @@ public class abbonamentoCompleto extends Abbonamento {
 	/**
 	 * 
 	 */
-	public Sala sala;
+	private Sala sala;
 	/**
 	 * 
 	 */
-	public int sogliaSconto;
+	private int sogliaSconto;
 }

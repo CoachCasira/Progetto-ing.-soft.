@@ -9,4 +9,14 @@ package Palestra;
  * 
  */
 public class PersonalTrainer extends Dipendente {
+	
+	private String partitaIva;
+	private int anniEspereianza;
+	private String certificati;
+	
+	public String creaSchedaAllenamento() {
+		
+		return null;
+	}
+	
 }
