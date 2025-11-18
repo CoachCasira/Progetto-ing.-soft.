@@ -9,4 +9,11 @@ package model;
  * 
  */
 public class Nutrizionista extends Dipendente {
+	
+	   private String parcella;
+
+	    public String creaPianoAlimentare() {
+	        // TODO: crea e restituisce un piano alimentare
+	        return null;
+	    }
 }

@@ -9,4 +9,13 @@ package model;
  * 
  */
 public class PersonalTrainer extends Dipendente {
+	
+	 private String partitaIva;
+	 private int anniEsperienza;
+     private String certificati;
+
+	    public String creaSchedaAllenamento() {
+	        // TODO: genera una scheda di allenamento
+	        return null;
+	    }
 }

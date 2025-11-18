@@ -9,4 +9,9 @@ package model;
  * 
  */
 public class SalaPesi extends Sala {
+	 public int idSala;
+	 public int metratura;
+	 public int numMacchinari;
+	 public int numPanche;
+	 public int numPesiLiberi;
 }

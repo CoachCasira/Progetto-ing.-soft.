@@ -4,9 +4,37 @@
 
 package model;
 
+import java.util.Date;
+
 /************************************************************/
 /**
  * 
  */
 public class Cliente {
+	public String cognome;
+    public String nome;
+    public String CF;
+    public Date dataNascita;
+    public String iban;
+    public Abbonamento abbonamento;
+    public String password;
+    public Pagamento pagamento;
+    private String luogoNascita;
+
+    public void loginApp(String username, String password) {
+        // TODO: logica di login
+    }
+
+    public void vediAbbonamento() {
+        // TODO: mostra i dati dell'abbonamento
+    }
+
+    public void prenotaConsulenza(Dipendente dip, Date data) {
+        // TODO: prenota una consulenza con il dipendente indicato
+    }
+
+    public Pagamento effettuaPagamento(int importo, String metodo) {
+        // TODO: crea/effettua pagamento
+        return pagamento;
+    }
 }

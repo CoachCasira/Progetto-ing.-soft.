@@ -9,4 +9,18 @@ package model;
  * 
  */
 public abstract class Dipendente {
+	
+	private String cognome;
+    private String nome;
+    private String idDipendente;
+    private String orarioDisponibilita;
+
+    public String rilascioDocumento(Cliente cliente) {
+        // TODO: restituisce qualche tipo di documento per il cliente
+        return null;
+    }
+
+    public void consultaAgenda() {
+        // TODO: visualizza/gestisce agenda appuntamenti
+    }
 }

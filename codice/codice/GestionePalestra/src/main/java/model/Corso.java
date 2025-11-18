@@ -12,8 +12,7 @@ public class Corso {
 	/**
 	 * 
 	 */
-	public class Class1 {
-	};
+
 
 	/**
 	 * 

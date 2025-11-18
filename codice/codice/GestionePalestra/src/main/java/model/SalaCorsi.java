@@ -9,4 +9,7 @@ package model;
  * 
  */
 public class SalaCorsi extends Sala {
+	
+	   public int idSala;
+	    public String orarioCorso;
 }

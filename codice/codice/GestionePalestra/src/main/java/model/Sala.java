@@ -9,4 +9,21 @@ package model;
  * 
  */
 public class Sala {
+	
+	 public String orariApertura;
+	 public int capienza;
+	 public boolean disponibilita;
+
+	    public boolean verificaDisponibilita() {
+	        // TODO: verifica se la sala è disponibile
+	        return true;
+	    }
+
+	    public void prenotaSala() {
+	        // TODO: prenota la sala
+	    }
+
+	    public void liberaSala() {
+	        // TODO: libera la sala
+	    }
 }
