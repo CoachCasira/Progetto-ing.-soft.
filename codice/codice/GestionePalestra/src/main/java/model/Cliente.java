@@ -4,6 +4,7 @@ import java.util.Date;
 
 public class Cliente {
 
+	private int idCliente;
     private String username;
     private String password;
     private String nome;
@@ -13,13 +14,17 @@ public class Cliente {
     private Date dataNascita;
     private String iban;
 
-    // Eventuali altri oggetti collegati
-    private Abbonamento abbonamento;
-    private Pagamento pagamento;
+    // Oggetti collegati
+    private Abbonamento abbonamento;  // null = nessun abbonamento
+    private Pagamento pagamento;      // ultimo pagamento effettuato
 
     // ============================
-    // COSTRUTTORE
+    // COSTRUTTORI
     // ============================
+    public Cliente() {
+        // costruttore vuoto richiesto da vari framework / DAO
+    }
+
     public Cliente(String username,
                    String password,
                    String nome,
@@ -42,6 +47,14 @@ public class Cliente {
     // ============================
     // GETTER & SETTER
     // ============================
+    
+    public int getIdCliente() {
+        return idCliente;
+    }
+
+    public void setIdCliente(int idCliente) {
+        this.idCliente = idCliente;
+    }
     public String getUsername() { return username; }
     public void setUsername(String username) { this.username = username; }
 
@@ -72,23 +85,56 @@ public class Cliente {
     public Pagamento getPagamento() { return pagamento; }
     public void setPagamento(Pagamento pagamento) { this.pagamento = pagamento; }
 
-    
-    
-    
+    // ============================
+    // METODI DI COMODO DI BUSINESS
+    // ============================
+
+    /** Ritorna true se il cliente ha un abbonamento attivo (non nullo e non scaduto). */
+    public boolean hasAbbonamentoAttivo() {
+        if (abbonamento == null) {
+            return false;
+        }
+        Date oggi = new Date();
+        return abbonamento.getScadenza() == null
+                || abbonamento.getScadenza().after(oggi);
+    }
+
+    /**
+     * Sottoscrive un nuovo abbonamento, associandolo al cliente insieme
+     * al pagamento effettuato (nel tuo flusso: schermata di pagamento → crea
+     * Abbonamento + Pagamento → chiama questo metodo).
+     */
+    public void sottoscriviAbbonamento(Abbonamento nuovo, Pagamento pag) {
+        this.abbonamento = nuovo;
+        this.pagamento = pag;
+    }
+
+    /** Disdice l'abbonamento attuale (nel tuo flusso poi riapri la schermata scelta abbonamento). */
+    public void disdiciAbbonamento() {
+        this.abbonamento = null;
+        // volendo puoi lasciare l'ultimo pagamento memorizzato
+    }
+
+    // I metodi Papyrus li lasciamo vuoti o li facciamo richiamare la logica esistente.
     public void loginApp(String username, String password) {
-        // TODO: logica di login
+        // Gestito a livello di controller/DAO
     }
 
     public void vediAbbonamento() {
-        // TODO: mostra dati abbonamento
+        // La GUI userà getAbbonamento() per mostrare i dati
     }
 
     public void prenotaConsulenza(Dipendente dip, Date data) {
-        // TODO: prenotazione consulenza
+        // Non implementato per questo progetto
     }
 
-    public Pagamento effettuaPagamento(int importo, String metodo) {
-        // TODO: logica pagamento
-        return pagamento;
+    /**
+     * Metodo di comodo: crea un Pagamento a partire da importo/metodo
+     * e lo associa al cliente (non interagisce col DB, è solo lato model).
+     */
+    public Pagamento effettuaPagamento(float importo, String metodo) {
+        Pagamento p = new Pagamento(metodo, importo, new Date());
+        this.pagamento = p;
+        return p;
     }
 }

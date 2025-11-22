@@ -1,20 +1,23 @@
 package controller;
 
-import DB.GestioneDB;
+import db.GestioneDB;
+import db.AbbonamentoDAO;
+import model.Abbonamento;
 import model.Cliente;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import view.HomeView;
 import view.LoginView;
 import view.RegistrazioneView;
+import view.SelezionaAbbonamentoView;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.sql.*;
 
 public class LoginController {
 
-    private static final Logger logger = LogManager.getLogger(LoginController.class);
+    private static final Logger logger =
+            LogManager.getLogger(LoginController.class);
 
     private final LoginView view;
 
@@ -42,14 +45,46 @@ public class LoginController {
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    // Creiamo l'oggetto Cliente a partire dai dati nel DB
-                    Cliente clienteLoggato = creaClienteDaResultSet(rs);
+                    // Costruisco l'oggetto Cliente a partire dal DB
+                    Cliente cliente = new Cliente();
+                    cliente.setIdCliente(rs.getInt("ID_CLIENTE"));
+                    cliente.setUsername(rs.getString("USERNAME"));
+                    cliente.setNome(rs.getString("NOME"));
+                    cliente.setCognome(rs.getString("COGNOME"));
+                    cliente.setCF(rs.getString("CF"));
+                    cliente.setLuogoNascita(rs.getString("LUOGO_NASCITA"));
+                    cliente.setPassword(rs.getString("PASSWORD"));
+                    cliente.setIban(rs.getString("IBAN"));
+                    Date dataNascita = rs.getDate("DATA_NASCITA");
+                    if (dataNascita != null) {
+                        cliente.setDataNascita(new java.util.Date(dataNascita.getTime()));
+                    }
 
-                    view.mostraMessaggioInfo("Login effettuato con successo!");
-                    logger.info("Login riuscito per {}", clienteLoggato.getUsername());
+                    logger.info("Login riuscito per {}", username);
 
-                    // TODO: apri la schermata principale dell'applicazione
-                    // passando 'clienteLoggato' al prossimo controller/view
+                    // Verifico se esiste già un abbonamento su DB
+                    Abbonamento abb = AbbonamentoDAO.getAbbonamentoByClienteId(cliente.getIdCliente());
+
+                    if (abb != null) {
+                        // Il cliente ha già un abbonamento → saltiamo la scelta e andiamo direttamente alla Home
+                        cliente.setAbbonamento(abb);
+                        view.mostraMessaggioInfo("Benvenuto, accesso effettuato. Abbonamento attivo trovato.");
+                        view.dispose();
+
+                        HomeView hView = new HomeView(cliente);
+                        HomeController hController = new HomeController(hView, cliente);
+                        hView.setVisible(true);
+
+                    } else {
+                        // Nessun abbonamento → mandiamo alla schermata di selezione abbonamento
+                        view.mostraMessaggioInfo("Accesso effettuato. Nessun abbonamento attivo, selezionane uno.");
+                        view.dispose();
+
+                        SelezionaAbbonamentoView sView = new SelezionaAbbonamentoView(cliente);
+                        SelezionaAbbonamentoController sController =
+                                new SelezionaAbbonamentoController(sView, cliente);
+                        sView.setVisible(true);
+                    }
 
                 } else {
                     view.mostraMessaggioErrore("Credenziali non valide.");
@@ -72,29 +107,5 @@ public class LoginController {
         RegistrazioneView regView = new RegistrazioneView();
         new RegistrazioneController(regView); // collega controller e view
         regView.setVisible(true);
-    }
-
-    // --------- Metodo di supporto per costruire l'oggetto Cliente ---------
-
-    private Cliente creaClienteDaResultSet(ResultSet rs) throws SQLException {
-        String username = rs.getString("USERNAME");
-        String password = rs.getString("PASSWORD");
-        String nome = rs.getString("NOME");
-        String cognome = rs.getString("COGNOME");
-        String cf = rs.getString("CF");
-        String luogoNascita = rs.getString("LUOGO_NASCITA");
-        java.util.Date dataNascita = rs.getDate("DATA_NASCITA"); // java.sql.Date è una java.util.Date
-        String iban = rs.getString("IBAN");
-
-        return new Cliente(
-                username,
-                password,
-                nome,
-                cognome,
-                cf,
-                luogoNascita,
-                dataNascita,
-                iban
-        );
     }
 }

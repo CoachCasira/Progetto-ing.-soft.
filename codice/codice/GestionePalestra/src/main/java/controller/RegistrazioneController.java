@@ -1,9 +1,10 @@
 package controller;
 
-import DB.GestioneDB;
 import model.Cliente;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import db.GestioneDB;
 import view.RegistrazioneView;
 
 import java.sql.Connection;

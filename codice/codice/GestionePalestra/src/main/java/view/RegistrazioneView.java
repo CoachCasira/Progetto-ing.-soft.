@@ -297,10 +297,11 @@ public class RegistrazioneView extends JFrame {
 
     private void onConfermaClicked() {
         if (controller == null) {
-            JOptionPane.showMessageDialog(this, "Controller non impostato!",
-                    "Errore", JOptionPane.ERROR_MESSAGE);
+        	ThemedDialog.showMessage(this, "Errore", "Controller non impostato!", true);
+
             return;
         }
+
 
         String username = txtUsername.getText().trim();
         String password = new String(txtPassword.getPassword());
@@ -320,12 +321,12 @@ public class RegistrazioneView extends JFrame {
     }
 
     public void mostraMessaggioInfo(String msg) {
-        JOptionPane.showMessageDialog(this, msg, "Info",
-                JOptionPane.INFORMATION_MESSAGE);
+        ThemedDialog.showMessage(this, "Info", msg, false);
     }
 
     public void mostraMessaggioErrore(String msg) {
-        JOptionPane.showMessageDialog(this, msg, "Errore",
-                JOptionPane.ERROR_MESSAGE);
+        ThemedDialog.showMessage(this, "Errore", msg, true);
     }
+
 }
+

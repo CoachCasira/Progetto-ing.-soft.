@@ -231,20 +231,22 @@ public class LoginView extends JFrame {
         return b;
     }
 
-    // ---------------- Callback listener ----------------
     private void onLoginClicked() {
         if (controller == null) {
-            JOptionPane.showMessageDialog(this,
-                    "Controller non impostato!", "Errore", JOptionPane.ERROR_MESSAGE);
+        	ThemedDialog.showMessage(this, "Errore", "Controller non impostato!", true);
+
             return;
         }
-        controller.handleLogin(txtUsername.getText().trim(), new String(txtPassword.getPassword()));
+        controller.handleLogin(
+                txtUsername.getText().trim(),
+                new String(txtPassword.getPassword())
+        );
     }
 
     private void onRegistratiClicked() {
         if (controller == null) {
-            JOptionPane.showMessageDialog(this,
-                    "Controller non impostato!", "Errore", JOptionPane.ERROR_MESSAGE);
+        	ThemedDialog.showMessage(this, "Errore", "Controller non impostato!", true);
+
             return;
         }
         controller.handleRegistrazione();
@@ -252,10 +254,12 @@ public class LoginView extends JFrame {
 
     // ---------------- Utility controller ----------------
     public void mostraMessaggioInfo(String msg) {
-        JOptionPane.showMessageDialog(this, msg, "Info", JOptionPane.INFORMATION_MESSAGE);
+        ThemedDialog.showMessage(this, "Info", msg, false);
     }
 
     public void mostraMessaggioErrore(String msg) {
-        JOptionPane.showMessageDialog(this, msg, "Errore", JOptionPane.ERROR_MESSAGE);
+        ThemedDialog.showMessage(this, "Errore", msg, true);
     }
+
+
 }

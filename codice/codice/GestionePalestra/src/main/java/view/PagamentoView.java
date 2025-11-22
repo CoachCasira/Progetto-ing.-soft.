@@ -1,0 +1,204 @@
+package view;
+
+import controller.PagamentoController;
+import model.Abbonamento;
+import model.Cliente;
+
+import javax.swing.*;
+import java.awt.*;
+
+public class PagamentoView extends JFrame {
+
+    private static final long serialVersionUID = 1L;
+
+    private static final Color DARK_BG   = new Color(20, 20, 20);
+    private static final Color CARD_BG   = new Color(30, 30, 30);
+    private static final Color ORANGE    = new Color(255, 140, 0);
+    private static final Color ORANGE_HO = new Color(255, 170, 40);
+    private static final Color TEXT_GRAY = new Color(200, 200, 200);
+
+    private PagamentoController controller;
+
+    private JLabel lblTipo;
+    private JLabel lblPrezzo;
+    private JLabel lblFascia;
+    private JComboBox<String> comboMetodo;
+    private JButton btnPaga;
+    private JButton btnAnnulla;
+
+    private final Cliente cliente;
+    private final Abbonamento abbonamento;
+
+    public PagamentoView(Cliente cliente, Abbonamento abbonamento) {
+        this.cliente = cliente;
+        this.abbonamento = abbonamento;
+        initUI();
+    }
+
+    public void setController(PagamentoController controller) {
+        this.controller = controller;
+    }
+
+    private void initUI() {
+        setTitle("GestionePalestra - Pagamento abbonamento");
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setSize(550, 400);
+        setLocationRelativeTo(null);
+        setResizable(false);
+
+        JPanel main = new JPanel(new BorderLayout());
+        main.setBackground(DARK_BG);
+        setContentPane(main);
+
+        // HEADER
+        JPanel header = new JPanel();
+        header.setLayout(new BoxLayout(header, BoxLayout.Y_AXIS));
+        header.setBackground(DARK_BG);
+        header.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 20));
+
+        JLabel lblTitolo = new JLabel("Conferma pagamento");
+        lblTitolo.setForeground(ORANGE);
+        lblTitolo.setFont(new Font("SansSerif", Font.BOLD, 22));
+        lblTitolo.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JLabel lblSotto = new JLabel(
+                "Controlla i dati dell'abbonamento e scegli il metodo di pagamento.");
+        lblSotto.setForeground(TEXT_GRAY);
+        lblSotto.setFont(new Font("SansSerif", Font.PLAIN, 13));
+        lblSotto.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        header.add(lblTitolo);
+        header.add(Box.createVerticalStrut(5));
+        header.add(lblSotto);
+
+        main.add(header, BorderLayout.NORTH);
+
+        // CARD CENTRALE
+        JPanel card = new JPanel(new GridBagLayout());
+        card.setBackground(CARD_BG);
+        card.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        lblTipo = new JLabel("Tipo abbonamento: " + abbonamento.getTipo());
+        lblTipo.setForeground(Color.WHITE);
+
+        lblPrezzo = new JLabel("Prezzo: " + abbonamento.getPrezzo() + " €");
+        lblPrezzo.setForeground(Color.WHITE);
+
+        lblFascia = new JLabel("Fascia oraria: " + abbonamento.getFasciaOrariaConsentita());
+        lblFascia.setForeground(Color.WHITE);
+
+        gbc.gridx = 0; gbc.gridy = 0;
+        card.add(lblTipo, gbc);
+        gbc.gridy++;
+        card.add(lblPrezzo, gbc);
+        gbc.gridy++;
+        card.add(lblFascia, gbc);
+
+        gbc.gridy++;
+        JLabel lblMetodo = new JLabel("Metodo di pagamento:");
+        lblMetodo.setForeground(TEXT_GRAY);
+        card.add(lblMetodo, gbc);
+
+        gbc.gridy++;
+        comboMetodo = new JComboBox<>(new String[]{
+                "Carta di credito", "Bancomat", "Contanti"
+        });
+
+        // *** SISTEMA VISUALIZZAZIONE: sfondo bianco, testo nero, selezione iniziale ***
+        comboMetodo.setSelectedIndex(0);
+        comboMetodo.setBackground(Color.WHITE);
+        comboMetodo.setForeground(Color.BLACK);
+        comboMetodo.setFont(new Font("SansSerif", Font.PLAIN, 13));
+        comboMetodo.setBorder(BorderFactory.createLineBorder(new Color(70, 70, 70)));
+
+        card.add(comboMetodo, gbc);
+
+        main.add(card, BorderLayout.CENTER);
+
+        // FOOTER BOTTONI
+        JPanel buttons = new JPanel();
+        buttons.setBackground(DARK_BG);
+        buttons.setBorder(BorderFactory.createEmptyBorder(10, 20, 20, 20));
+
+        btnPaga = creaBottoneArancione("Paga e attiva abbonamento");
+        btnAnnulla = creaBottoneSoloBordo("Annulla");
+
+        buttons.add(btnPaga);
+        buttons.add(Box.createHorizontalStrut(15));
+        buttons.add(btnAnnulla);
+
+        main.add(buttons, BorderLayout.SOUTH);
+
+        // listener
+        btnPaga.addActionListener(e -> {
+            if (controller != null) {
+                String metodo = (String) comboMetodo.getSelectedItem();
+                controller.handlePaga(metodo);
+            }
+        });
+
+        btnAnnulla.addActionListener(e -> {
+            if (controller != null) controller.handleAnnulla();
+        });
+    }
+
+    private JButton creaBottoneArancione(String testo) {
+        JButton b = new JButton(testo);
+        b.setBackground(ORANGE);
+        b.setForeground(Color.BLACK);
+        b.setFocusPainted(false);
+        b.setBorder(BorderFactory.createEmptyBorder(8, 20, 8, 20));
+        b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        b.setOpaque(true);
+        b.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent e) {
+                b.setBackground(ORANGE_HO);
+            }
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent e) {
+                b.setBackground(ORANGE);
+            }
+        });
+        return b;
+    }
+
+    private JButton creaBottoneSoloBordo(String testo) {
+        JButton b = new JButton(testo);
+        b.setBackground(DARK_BG);
+        b.setForeground(ORANGE);
+        b.setFocusPainted(false);
+        b.setBorder(BorderFactory.createLineBorder(ORANGE));
+        b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        b.setOpaque(true);
+        b.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent e) {
+                b.setBackground(new Color(40, 40, 40));
+            }
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent e) {
+                b.setBackground(DARK_BG);
+            }
+        });
+        return b;
+    }
+
+    // metodi usati dal controller
+    public void mostraMessaggioInfo(String msg) {
+        ThemedDialog.showMessage(this, "Info", msg, false);
+    }
+
+    public void mostraMessaggioErrore(String msg) {
+        ThemedDialog.showMessage(this, "Errore", msg, true);
+    }
+
+
+    public Cliente getCliente() { return cliente; }
+    public Abbonamento getAbbonamento() { return abbonamento; }
+}
