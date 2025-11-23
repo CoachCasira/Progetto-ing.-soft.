@@ -1,4 +1,4 @@
-package db;
+package db.dao;
 
 import db.GestioneDB;
 import model.Pagamento;

@@ -1,7 +1,7 @@
 package controller;
 
 import db.GestioneDB;
-import db.AbbonamentoDAO;
+import db.dao.AbbonamentoDAO;
 import model.Abbonamento;
 import model.Cliente;
 import view.HomeView;

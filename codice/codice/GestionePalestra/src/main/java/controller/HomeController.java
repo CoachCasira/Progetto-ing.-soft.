@@ -1,17 +1,22 @@
 package controller;
 
-import db.AbbonamentoDAO;
-import model.Cliente;
+import db.dao.AbbonamentoDAO;
+import db.dao.ConsulenzaDAO;
+import db.dao.ConsulenzaDAO.ConsulenzaDettaglio;
 import model.Abbonamento;
+import model.Cliente;
 import view.HomeView;
 import view.LoginView;
+import view.PrenotaConsulenzaView;
 import view.SelezionaAbbonamentoView;
 import view.ThemedDialog;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.swing.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
 
 public class HomeController {
 
@@ -27,6 +32,84 @@ public class HomeController {
         this.view.setController(this);
     }
 
+    /** Apertura schermata prenotazione consulenza (chiude la Home) */
+    public void handlePrenotaConsulenza() {
+        view.dispose(); // chiudo l’area personale
+
+        PrenotaConsulenzaView v = new PrenotaConsulenzaView(cliente);
+        new PrenotaConsulenzaController(v, cliente);
+        v.setVisible(true);
+    }
+
+    /** Mostra tutte le consulenze del cliente (future e passate) */
+    public void handleVediConsulenza() {
+        try {
+            List<ConsulenzaDettaglio> lista =
+                    ConsulenzaDAO.findByCliente(cliente.getIdCliente());
+
+            if (lista.isEmpty()) {
+                view.mostraMessaggioInfo(
+                        "Non hai ancora prenotato alcuna consulenza.");
+                return;
+            }
+
+            LocalDate oggi = LocalDate.now();
+            LocalTime adesso = LocalTime.now();
+
+            StringBuilder futureSb = new StringBuilder();
+            StringBuilder pastSb   = new StringBuilder();
+
+            for (ConsulenzaDettaglio c : lista) {
+                int durata = ConsulenzaDAO.getDurataMinuti(c.tipo);
+                LocalTime fine = c.ora.plusMinutes(durata);
+
+                boolean giaPassata =
+                        c.data.isBefore(oggi) ||
+                        (c.data.isEqual(oggi) && fine.isBefore(adesso));
+
+                String nota = (c.note != null && !c.note.isEmpty())
+                        ? c.note
+                        : "Nessuna nota.";
+
+                String blocco =
+                        "- " + c.data + " ore " + c.ora + "\n" +
+                        "  Tipo: " + c.tipo + "\n" +
+                        "  Professionista: " + c.nomeDipendente +
+                        " (" + c.ruoloDipendente + ")\n" +
+                        "  Durata stimata: " + durata + " minuti\n" +
+                        "  Note: " + nota + "\n\n";
+
+                if (giaPassata) {
+                    pastSb.append(blocco);
+                } else {
+                    futureSb.append(blocco);
+                }
+            }
+
+            StringBuilder testo = new StringBuilder();
+
+            if (futureSb.length() > 0) {
+                testo.append("CONSULENZE FUTURE / PROGRAMMATE\n\n");
+                testo.append(futureSb);
+            }
+
+            if (pastSb.length() > 0) {
+                if (testo.length() > 0) {
+                    testo.append("\n------------------------------\n\n");
+                }
+                testo.append("CONSULENZE PASSATE\n\n");
+                testo.append(pastSb);
+            }
+
+            view.mostraDettaglioConsulenza(testo.toString());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            view.mostraMessaggioErrore(
+                    "Si è verificato un errore nel caricamento delle consulenze.");
+        }
+    }
+
     public void handleVediAbbonamento() {
         Abbonamento abb = cliente.getAbbonamento();
         if (abb == null) {
@@ -36,10 +119,8 @@ public class HomeController {
             return;
         }
 
-        // usa la finestra personalizzata della HomeView
         view.mostraDettaglioAbbonamento(abb);
     }
-
 
     /** Simulazione prenotazione corsi */
     public void handlePrenotaCorso() {
@@ -73,10 +154,8 @@ public class HomeController {
             view.mostraMessaggioInfo("Abbonamento disdetto con successo.");
             logger.info("Abbonamento disdetto per utente {}", cliente.getUsername());
 
-            // dopo la disdetta vai direttamente alla scelta abbonamento
             SelezionaAbbonamentoView sView = new SelezionaAbbonamentoView(cliente);
-            SelezionaAbbonamentoController sController =
-                    new SelezionaAbbonamentoController(sView, cliente);
+            new SelezionaAbbonamentoController(sView, cliente);
             sView.setVisible(true);
             view.dispose();
 
@@ -86,7 +165,6 @@ public class HomeController {
                     "Si è verificato un errore durante la disdetta dell’abbonamento.");
         }
     }
-
 
     /** Logout utente */
     public void handleLogout() {

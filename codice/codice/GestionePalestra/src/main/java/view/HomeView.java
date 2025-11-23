@@ -22,6 +22,8 @@ public class HomeView extends JFrame {
 
     private JButton btnVediAbbonamento;
     private JButton btnPrenotaCorso;
+    private JButton btnPrenotaConsulenza;
+    private JButton btnVediConsulenza;
     private JButton btnDisdiciAbbonamento;
     private JButton btnLogout;
 
@@ -37,7 +39,8 @@ public class HomeView extends JFrame {
     private void initUI() {
         setTitle("GestionePalestra - Home");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(700, 450);
+        // altezza leggermente aumentata per vedere tutti i bottoni
+        setSize(700, 520);
         setLocationRelativeTo(null);
         setResizable(false);
 
@@ -72,7 +75,8 @@ public class HomeView extends JFrame {
         // --------- CARD CENTRALE ---------
         JPanel card = new JPanel();
         card.setBackground(CARD_BG);
-        card.setBorder(BorderFactory.createEmptyBorder(40, 80, 40, 80));
+        // padding leggermente ridotto
+        card.setBorder(BorderFactory.createEmptyBorder(30, 80, 30, 80));
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
 
         JLabel lblScelta = new JLabel("Scegli un'operazione:");
@@ -81,24 +85,32 @@ public class HomeView extends JFrame {
         lblScelta.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         card.add(lblScelta);
-        card.add(Box.createVerticalStrut(30));
+        card.add(Box.createVerticalStrut(20));
 
         btnVediAbbonamento    = creaBottoneArancione("Vedi abbonamento");
         btnPrenotaCorso       = creaBottoneArancione("Prenota corso");
+        btnPrenotaConsulenza  = creaBottoneArancione("Prenota consulenza");
+        btnVediConsulenza     = creaBottoneSoloBordo("Vedi consulenza prenotata");
         btnDisdiciAbbonamento = creaBottoneSoloBordo("Disdici abbonamento");
         btnLogout             = creaBottoneSoloBordo("Logout");
 
         btnVediAbbonamento.setAlignmentX(Component.CENTER_ALIGNMENT);
         btnPrenotaCorso.setAlignmentX(Component.CENTER_ALIGNMENT);
+        btnPrenotaConsulenza.setAlignmentX(Component.CENTER_ALIGNMENT);
+        btnVediConsulenza.setAlignmentX(Component.CENTER_ALIGNMENT);
         btnDisdiciAbbonamento.setAlignmentX(Component.CENTER_ALIGNMENT);
         btnLogout.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         card.add(btnVediAbbonamento);
-        card.add(Box.createVerticalStrut(15));
+        card.add(Box.createVerticalStrut(10));
         card.add(btnPrenotaCorso);
-        card.add(Box.createVerticalStrut(15));
+        card.add(Box.createVerticalStrut(10));
+        card.add(btnPrenotaConsulenza);
+        card.add(Box.createVerticalStrut(10));
+        card.add(btnVediConsulenza);
+        card.add(Box.createVerticalStrut(10));
         card.add(btnDisdiciAbbonamento);
-        card.add(Box.createVerticalStrut(25));
+        card.add(Box.createVerticalStrut(15));
         card.add(btnLogout);
 
         JPanel centerWrapper = new JPanel(new GridBagLayout());
@@ -122,6 +134,7 @@ public class HomeView extends JFrame {
 
         // ---- visibilità prenota corso in base all'abbonamento ----
         aggiornaVisibilitaPrenotaCorso();
+        // prenota consulenza sempre visibile
 
         // --------- LISTENER ---------
         btnVediAbbonamento.addActionListener(e -> {
@@ -130,6 +143,14 @@ public class HomeView extends JFrame {
 
         btnPrenotaCorso.addActionListener(e -> {
             if (controller != null) controller.handlePrenotaCorso();
+        });
+
+        btnPrenotaConsulenza.addActionListener(e -> {
+            if (controller != null) controller.handlePrenotaConsulenza();
+        });
+
+        btnVediConsulenza.addActionListener(e -> {
+            if (controller != null) controller.handleVediConsulenza();
         });
 
         btnDisdiciAbbonamento.addActionListener(e -> {
@@ -172,6 +193,7 @@ public class HomeView extends JFrame {
             public void mouseEntered(java.awt.event.MouseEvent e) {
                 b.setBackground(ORANGE_HO);
             }
+
             @Override
             public void mouseExited(java.awt.event.MouseEvent e) {
                 b.setBackground(ORANGE);
@@ -182,8 +204,8 @@ public class HomeView extends JFrame {
 
     private JButton creaBottoneSoloBordo(String testo) {
         JButton b = new JButton(testo);
-        b.setPreferredSize(new Dimension(260, 46));
-        b.setMaximumSize(new Dimension(280, 46));
+        b.setPreferredSize(new Dimension(260, 40));
+        b.setMaximumSize(new Dimension(280, 40));
         b.setBackground(DARK_BG);
         b.setForeground(ORANGE);
         b.setFocusPainted(false);
@@ -196,6 +218,7 @@ public class HomeView extends JFrame {
             public void mouseEntered(java.awt.event.MouseEvent e) {
                 b.setBackground(new Color(40, 40, 40));
             }
+
             @Override
             public void mouseExited(java.awt.event.MouseEvent e) {
                 b.setBackground(DARK_BG);
@@ -240,6 +263,66 @@ public class HomeView extends JFrame {
         txt.setFont(new Font("SansSerif", Font.PLAIN, 13));
         txt.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
         txt.setText(abb.getDescrizioneCompleta());
+
+        JScrollPane scroll = new JScrollPane(txt);
+        scroll.setBorder(BorderFactory.createLineBorder(new Color(70, 70, 70)));
+        scroll.getViewport().setBackground(CARD_BG);
+
+        JPanel center = new JPanel(new BorderLayout());
+        center.setBackground(DARK_BG);
+        center.setBorder(BorderFactory.createEmptyBorder(0, 20, 10, 20));
+        center.add(scroll, BorderLayout.CENTER);
+        main.add(center, BorderLayout.CENTER);
+
+        JPanel footer = new JPanel();
+        footer.setBackground(DARK_BG);
+        footer.setBorder(BorderFactory.createEmptyBorder(10, 0, 15, 0));
+
+        JButton btnChiudi = creaBottoneSoloBordo("Chiudi");
+        btnChiudi.addActionListener(e -> dialog.dispose());
+        footer.add(btnChiudi);
+
+        main.add(footer, BorderLayout.SOUTH);
+
+        dialog.setVisible(true);
+    }
+
+    // ======================================================
+    // Finestra custom per i dettagli dell’ultima consulenza
+    // ======================================================
+    public void mostraDettaglioConsulenza(String testoDettaglio) {
+        JDialog dialog = new JDialog(this, "Dettagli consulenza", true);
+        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        dialog.setSize(520, 360);
+        dialog.setLocationRelativeTo(this);
+        dialog.setResizable(false);
+
+        JPanel main = new JPanel(new BorderLayout());
+        main.setBackground(DARK_BG);
+        dialog.setContentPane(main);
+
+        JPanel header = new JPanel();
+        header.setBackground(DARK_BG);
+        header.setBorder(BorderFactory.createEmptyBorder(15, 20, 10, 20));
+        header.setLayout(new BoxLayout(header, BoxLayout.Y_AXIS));
+
+        JLabel lblTitle = new JLabel("Dettagli ultima consulenza prenotata");
+        lblTitle.setForeground(ORANGE);
+        lblTitle.setFont(new Font("SansSerif", Font.BOLD, 18));
+        lblTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        header.add(lblTitle);
+        main.add(header, BorderLayout.NORTH);
+
+        JTextArea txt = new JTextArea();
+        txt.setEditable(false);
+        txt.setLineWrap(true);
+        txt.setWrapStyleWord(true);
+        txt.setBackground(CARD_BG);
+        txt.setForeground(Color.WHITE);
+        txt.setFont(new Font("SansSerif", Font.PLAIN, 13));
+        txt.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+        txt.setText(testoDettaglio);
 
         JScrollPane scroll = new JScrollPane(txt);
         scroll.setBorder(BorderFactory.createLineBorder(new Color(70, 70, 70)));

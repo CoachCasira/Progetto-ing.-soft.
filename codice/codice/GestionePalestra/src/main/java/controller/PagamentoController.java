@@ -1,7 +1,5 @@
 package controller;
 
-import db.AbbonamentoDAO;
-import db.PagamentoDAO;
 import model.Abbonamento;
 import model.Cliente;
 import model.Pagamento;
@@ -10,6 +8,9 @@ import view.PagamentoView;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import db.dao.AbbonamentoDAO;
+import db.dao.PagamentoDAO;
 
 import java.util.Date;
 
