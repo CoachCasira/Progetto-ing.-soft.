@@ -3568,23 +3568,4 @@
       <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_EvfrAce5EfCElqa4LrZqyA" id="(0.5,0.988499452354874)"/>
     </edges>
   </notation:Diagram>
-  <notation:Diagram xmi:id="_s1mj8MlIEfCi7O5xBtefgA" type="PapyrusUMLCommunicationDiagram" name="CommunicationDiagramConsulenze" measurementUnit="Pixel">
-    <children xmi:type="notation:Shape" xmi:id="_s1mj8clIEfCi7O5xBtefgA" type="Interaction_Shape">
-      <children xmi:type="notation:DecorationNode" xmi:id="_s1mj8slIEfCi7O5xBtefgA" type="Interaction_NameLabel"/>
-      <children xmi:type="notation:DecorationNode" xmi:id="_s1mj88lIEfCi7O5xBtefgA" type="Interaction_FloatingNameLabel">
-        <layoutConstraint xmi:type="notation:Location" xmi:id="_s1mj9MlIEfCi7O5xBtefgA" x="50"/>
-      </children>
-      <children xmi:type="notation:BasicCompartment" xmi:id="_s1mj9clIEfCi7O5xBtefgA" type="Interaction_SubfragmentCompartment">
-        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_s1mj9slIEfCi7O5xBtefgA"/>
-      </children>
-      <element xmi:type="uml:Interaction" href="Palestra.uml#_outnEMlIEfCi7O5xBtefgA"/>
-      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_s1mj98lIEfCi7O5xBtefgA"/>
-    </children>
-    <styles xmi:type="notation:StringValueStyle" xmi:id="_s1mj-MlIEfCi7O5xBtefgA" name="diagram_compatibility_version" stringValue="1.4.0"/>
-    <styles xmi:type="notation:DiagramStyle" xmi:id="_s1mj-clIEfCi7O5xBtefgA"/>
-    <styles xmi:type="style:PapyrusDiagramStyle" xmi:id="_s1mj-slIEfCi7O5xBtefgA" diagramKindId="org.eclipse.papyrus.uml.diagram.communication">
-      <owner xmi:type="uml:Model" href="Palestra.uml#_Taj6MLvlEfCTgdBXOi_fLA"/>
-    </styles>
-    <element xmi:type="uml:Interaction" href="Palestra.uml#_outnEMlIEfCi7O5xBtefgA"/>
-  </notation:Diagram>
 </xmi:XMI>
