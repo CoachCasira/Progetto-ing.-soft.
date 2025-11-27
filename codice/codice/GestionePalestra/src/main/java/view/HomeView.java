@@ -343,13 +343,14 @@ public class HomeView extends JFrame {
     }
 
     public void mostraDettaglioAbbonamento(Abbonamento abb) {
+        // chiudo la Home mentre guardo i dettagli
+        this.setVisible(false);
+
         JDialog dialog = new JDialog(this, "Dettagli abbonamento", true);
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-
-        // stessa dimensione della Home / Login
-        dialog.setSize(420, 650);
-        dialog.setResizable(false);
+        dialog.setSize(420, 650);                 // stessa dimensione Home/Login
         dialog.setLocationRelativeTo(this);
+        dialog.setResizable(false);
 
         JPanel main = new JPanel(new BorderLayout());
         main.setBackground(DARK_BG);
@@ -369,7 +370,7 @@ public class HomeView extends JFrame {
         header.add(lblTitle);
         main.add(header, BorderLayout.NORTH);
 
-        // AREA TESTO + SCROLL
+        // TEXT AREA con descrizione (typing effect)
         JTextArea txt = new JTextArea();
         txt.setEditable(false);
         txt.setLineWrap(true);
@@ -378,14 +379,12 @@ public class HomeView extends JFrame {
         txt.setForeground(Color.WHITE);
         txt.setFont(new Font("SansSerif", Font.PLAIN, 13));
         txt.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
-        txt.setText(abb.getDescrizioneCompleta());
-        txt.setCaretPosition(0);
 
-        JScrollPane scroll = new JScrollPane(
-                txt,
-                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
-        );
+        // testo completo da scrivere "a macchina"
+        final String fullText = abb.getDescrizioneCompleta();
+        txt.setText("");  // partiamo vuoti
+
+        JScrollPane scroll = new JScrollPane(txt);
         scroll.setBorder(BorderFactory.createLineBorder(new Color(70, 70, 70)));
         scroll.getViewport().setBackground(CARD_BG);
 
@@ -395,7 +394,7 @@ public class HomeView extends JFrame {
         center.add(scroll, BorderLayout.CENTER);
         main.add(center, BorderLayout.CENTER);
 
-        // FOOTER CON BOTTONE CHIUDI
+        // FOOTER
         JPanel footer = new JPanel();
         footer.setBackground(DARK_BG);
         footer.setBorder(BorderFactory.createEmptyBorder(10, 0, 15, 0));
@@ -406,11 +405,53 @@ public class HomeView extends JFrame {
 
         main.add(footer, BorderLayout.SOUTH);
 
+        // ---- TYPING EFFECT: un carattere alla volta ----
+        final Timer[] timerRef = new Timer[1];
+        timerRef[0] = new Timer(18, e -> {   // velocità: ~18 ms per carattere
+            // se la finestra è stata chiusa, fermo il timer
+            if (!dialog.isShowing()) {
+                timerRef[0].stop();
+                return;
+            }
+
+            int lenCorrente = txt.getText().length();
+            if (lenCorrente < fullText.length()) {
+                txt.append(String.valueOf(fullText.charAt(lenCorrente)));
+                // mantieni lo scroll in fondo mentre scrive
+                txt.setCaretPosition(txt.getDocument().getLength());
+            } else {
+                timerRef[0].stop();
+            }
+        });
+
+        // quando chiudo il dialog → fermo il timer e ri-mostro la Home
+        dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosed(java.awt.event.WindowEvent e) {
+                if (timerRef[0] != null && timerRef[0].isRunning()) {
+                    timerRef[0].stop();
+                }
+                HomeView.this.setVisible(true);
+            }
+
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                if (timerRef[0] != null && timerRef[0].isRunning()) {
+                    timerRef[0].stop();
+                }
+            }
+        });
+
+        // avvio timer e mostro dialog
+        timerRef[0].start();
         dialog.setVisible(true);
     }
 
 
     public void mostraDettaglioConsulenza(String testoDettaglio) {
+        // nascondo la Home mentre guardo le consulenze
+        this.setVisible(false);
+
         JDialog dialog = new JDialog(this, "Dettagli consulenza", true);
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
@@ -423,7 +464,7 @@ public class HomeView extends JFrame {
         main.setBackground(DARK_BG);
         dialog.setContentPane(main);
 
-        // HEADER
+        // ===== HEADER =====
         JPanel header = new JPanel();
         header.setBackground(DARK_BG);
         header.setBorder(BorderFactory.createEmptyBorder(15, 20, 10, 20));
@@ -437,7 +478,7 @@ public class HomeView extends JFrame {
         header.add(lblTitle);
         main.add(header, BorderLayout.NORTH);
 
-        // TESTO DETTAGLIO (scrollabile)
+        // ===== AREA TESTO con effetto scrittura =====
         JTextArea txt = new JTextArea();
         txt.setEditable(false);
         txt.setLineWrap(true);
@@ -446,8 +487,9 @@ public class HomeView extends JFrame {
         txt.setForeground(Color.WHITE);
         txt.setFont(new Font("SansSerif", Font.PLAIN, 13));
         txt.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
-        txt.setText(testoDettaglio);
-        txt.setCaretPosition(0);
+
+        final String fullText = (testoDettaglio != null) ? testoDettaglio : "";
+        txt.setText(""); // partiamo vuoti, ci pensa il timer
 
         JScrollPane scroll = new JScrollPane(
                 txt,
@@ -463,7 +505,7 @@ public class HomeView extends JFrame {
         center.add(scroll, BorderLayout.CENTER);
         main.add(center, BorderLayout.CENTER);
 
-        // FOOTER con bottoni
+        // ===== FOOTER con bottoni =====
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
         footer.setBackground(DARK_BG);
         footer.setBorder(BorderFactory.createEmptyBorder(10, 0, 15, 0));
@@ -471,43 +513,85 @@ public class HomeView extends JFrame {
         JButton btnDisdici = creaBottoneSoloBordo("Disdici consulenza...");
         JButton btnChiudi  = creaBottoneSoloBordo("Chiudi");
 
-        // riduco la larghezza per farli stare affiancati
+        // larghezza ridotta per tenerli affiancati
         Dimension btnSize = new Dimension(160, 40);
         btnDisdici.setPreferredSize(btnSize);
         btnChiudi.setPreferredSize(btnSize);
-
-        btnDisdici.addActionListener(e -> {
-            if (controller != null) {
-                dialog.dispose();
-                controller.handleApriDisdettaConsulenza();
-            }
-        });
-
-        btnChiudi.addActionListener(e -> dialog.dispose());
 
         footer.add(btnDisdici);
         footer.add(btnChiudi);
 
         main.add(footer, BorderLayout.SOUTH);
 
+        // ===== TYPING EFFECT =====
+        final Timer[] timerRef = new Timer[1];
+        timerRef[0] = new Timer(18, e -> {
+            if (!dialog.isShowing()) {
+                timerRef[0].stop();
+                return;
+            }
+            int lenCorrente = txt.getText().length();
+            if (lenCorrente < fullText.length()) {
+                txt.append(String.valueOf(fullText.charAt(lenCorrente)));
+                txt.setCaretPosition(txt.getDocument().getLength());
+            } else {
+                timerRef[0].stop();
+            }
+        });
+
+        // azioni bottoni
+        btnChiudi.addActionListener(e -> dialog.dispose());
+
+        btnDisdici.addActionListener(e -> {
+            if (timerRef[0] != null && timerRef[0].isRunning()) {
+                timerRef[0].stop();
+            }
+            dialog.dispose();
+            if (controller != null) {
+                controller.handleApriDisdettaConsulenza();
+            }
+        });
+
+        // quando chiudo il dialog, fermo il timer e ri-mostro la Home
+        dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosed(java.awt.event.WindowEvent e) {
+                if (timerRef[0] != null && timerRef[0].isRunning()) {
+                    timerRef[0].stop();
+                }
+                HomeView.this.setVisible(true);
+            }
+
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                if (timerRef[0] != null && timerRef[0].isRunning()) {
+                    timerRef[0].stop();
+                }
+            }
+        });
+
+        // avvio animazione e mostro
+        timerRef[0].start();
         dialog.setVisible(true);
     }
 
 
+
     public void mostraDettaglioCorsi(String testoDettaglio) {
+        // nascondo la Home mentre guardo i corsi
+        this.setVisible(false);
+
         JDialog dialog = new JDialog(this, "Dettagli corsi", true);
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        dialog.setResizable(false);
-
-        // stessa dimensione della Home (layout stile telefono)
-        dialog.setSize(420, 650);
+        dialog.setSize(420, 650);                 // stessa dimensione Home/Login
         dialog.setLocationRelativeTo(this);
+        dialog.setResizable(false);
 
         JPanel main = new JPanel(new BorderLayout());
         main.setBackground(DARK_BG);
         dialog.setContentPane(main);
 
-        // HEADER
+        // ===== HEADER =====
         JPanel header = new JPanel();
         header.setBackground(DARK_BG);
         header.setBorder(BorderFactory.createEmptyBorder(15, 20, 10, 20));
@@ -515,13 +599,13 @@ public class HomeView extends JFrame {
 
         JLabel lblTitle = new JLabel("Dettagli corsi");
         lblTitle.setForeground(ORANGE);
-        lblTitle.setFont(new Font("SansSerif", Font.BOLD, 18));
+        lblTitle.setFont(new Font("SansSerif", Font.BOLD, 20));
         lblTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         header.add(lblTitle);
         main.add(header, BorderLayout.NORTH);
 
-        // AREA TESTO
+        // ===== AREA TESTO con effetto scrittura =====
         JTextArea txt = new JTextArea();
         txt.setEditable(false);
         txt.setLineWrap(true);
@@ -529,13 +613,10 @@ public class HomeView extends JFrame {
         txt.setBackground(CARD_BG);
         txt.setForeground(Color.WHITE);
         txt.setFont(new Font("SansSerif", Font.PLAIN, 13));
-        txt.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        txt.setText(testoDettaglio);
-        txt.setCaretPosition(0);
+        txt.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
-        // guida per restare "stretti" in larghezza
-        txt.setColumns(26);
-        txt.setRows(18);
+        final String fullText = testoDettaglio != null ? testoDettaglio : "";
+        txt.setText("");  // partiamo vuoti
 
         JScrollPane scroll = new JScrollPane(txt);
         scroll.setBorder(BorderFactory.createLineBorder(new Color(70, 70, 70)));
@@ -543,36 +624,80 @@ public class HomeView extends JFrame {
 
         JPanel center = new JPanel(new BorderLayout());
         center.setBackground(DARK_BG);
-        center.setBorder(BorderFactory.createEmptyBorder(0, 20, 5, 20));
+        center.setBorder(BorderFactory.createEmptyBorder(0, 20, 10, 20));
         center.add(scroll, BorderLayout.CENTER);
         main.add(center, BorderLayout.CENTER);
 
-        // FOOTER
-        JPanel footer = new JPanel();
+     // ===== FOOTER con bottoni =====
+        JPanel footer = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
         footer.setBackground(DARK_BG);
-        footer.setBorder(BorderFactory.createEmptyBorder(10, 20, 15, 20));
-        footer.setLayout(new BoxLayout(footer, BoxLayout.X_AXIS));
+        footer.setBorder(BorderFactory.createEmptyBorder(10, 0, 15, 0));
 
         JButton btnDisdici = creaBottoneSoloBordo("Disiscriviti da un corso...");
         JButton btnChiudi  = creaBottoneSoloBordo("Chiudi");
 
-        btnDisdici.addActionListener(e -> {
-            if (controller != null) {
-                dialog.dispose();
-                controller.handleApriDisdettaCorso();
-            }
-        });
-
-        btnChiudi.addActionListener(e -> dialog.dispose());
+        // riduco la larghezza per farli stare affiancati
+        Dimension btnSize = new Dimension(180, 40); // o 160 se li vuoi più compatti
+        btnDisdici.setPreferredSize(btnSize);
+        btnChiudi.setPreferredSize(btnSize);
 
         footer.add(btnDisdici);
-        footer.add(Box.createHorizontalStrut(10));
         footer.add(btnChiudi);
 
         main.add(footer, BorderLayout.SOUTH);
 
+        // ===== TYPING EFFECT =====
+        final Timer[] timerRef = new Timer[1];
+        timerRef[0] = new Timer(18, e -> {   // velocità caratteri
+            if (!dialog.isShowing()) {
+                timerRef[0].stop();
+                return;
+            }
+            int lenCorrente = txt.getText().length();
+            if (lenCorrente < fullText.length()) {
+                txt.append(String.valueOf(fullText.charAt(lenCorrente)));
+                txt.setCaretPosition(txt.getDocument().getLength());
+            } else {
+                timerRef[0].stop();
+            }
+        });
+
+        // azioni bottoni
+        btnChiudi.addActionListener(e -> dialog.dispose());
+
+        btnDisdici.addActionListener(e -> {
+            if (timerRef[0] != null && timerRef[0].isRunning()) {
+                timerRef[0].stop();
+            }
+            dialog.dispose();
+            if (controller != null) {
+                controller.handleApriDisdettaCorso();
+            }
+        });
+
+        // quando chiudo il dialog, fermo il timer e ri-mostro la Home
+        dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosed(java.awt.event.WindowEvent e) {
+                if (timerRef[0] != null && timerRef[0].isRunning()) {
+                    timerRef[0].stop();
+                }
+                HomeView.this.setVisible(true);
+            }
+
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                if (timerRef[0] != null && timerRef[0].isRunning()) {
+                    timerRef[0].stop();
+                }
+            }
+        });
+
+        // avvio animazione e mostro
+        timerRef[0].start();
         dialog.setVisible(true);
     }
+
 
 
     public void mostraMessaggioInfo(String msg) {
