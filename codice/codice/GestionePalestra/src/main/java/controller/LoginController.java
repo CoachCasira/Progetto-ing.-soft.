@@ -98,14 +98,17 @@ public class LoginController {
         }
     }
 
-    // Gestisce il click su "Registrati"
+ // Gestisce il click su "Registrati"
     public void handleRegistrazione() {
         logger.info("Apertura finestra di registrazione utente");
 
-        view.mostraMessaggioInfo("Apertura schermata di registrazione...");
+        // chiudo la schermata di login
+        view.dispose();
 
+        // apro la schermata di registrazione
         RegistrazioneView regView = new RegistrazioneView();
         new RegistrazioneController(regView); // collega controller e view
         regView.setVisible(true);
     }
+
 }

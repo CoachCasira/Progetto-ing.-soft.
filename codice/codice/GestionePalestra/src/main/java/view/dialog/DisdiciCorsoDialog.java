@@ -2,7 +2,6 @@ package view.dialog;
 
 import db.dao.CorsoDAO;
 import db.dao.CorsoDAO.IscrizioneInfo;
-import view.ThemedDialog;
 import model.Cliente;
 
 import javax.swing.*;

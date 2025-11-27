@@ -42,7 +42,9 @@ public class PrenotaCorsoView extends JFrame {
     private void initUI() {
         setTitle("Prenota corso");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(800, 500);
+
+        // stessa dimensione di Home/Login
+        setSize(420, 650);
         setLocationRelativeTo(null);
         setResizable(false);
 
@@ -50,7 +52,7 @@ public class PrenotaCorsoView extends JFrame {
         main.setBackground(DARK_BG);
         setContentPane(main);
 
-        // HEADER
+        // ================= HEADER =================
         JPanel header = new JPanel();
         header.setBackground(DARK_BG);
         header.setBorder(BorderFactory.createEmptyBorder(15, 20, 10, 20));
@@ -72,19 +74,13 @@ public class PrenotaCorsoView extends JFrame {
 
         main.add(header, BorderLayout.NORTH);
 
-        // CENTRO: due colonne
-        JPanel center = new JPanel(new GridLayout(1, 2, 10, 0));
-        center.setBackground(DARK_BG);
-        center.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        // =============== CARD CENTRALE (scrollabile, 1 colonna) ===============
+        JPanel card = new JPanel();
+        card.setBackground(CARD_BG);
+        card.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+        card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
 
-        // --- Colonna sinistra: corsi ---
-        JPanel panelCorsi = new JPanel(new BorderLayout());
-        panelCorsi.setBackground(CARD_BG);
-        panelCorsi.setBorder(BorderFactory.createTitledBorder(
-                BorderFactory.createLineBorder(new Color(70, 70, 70)),
-                "Corsi disponibili",
-                0, 0, new Font("SansSerif", Font.PLAIN, 12), TEXT_GRAY));
-
+        // --- Lista corsi ---
         modelCorsi = new DefaultListModel<>();
         listaCorsi = new JList<>(modelCorsi);
         listaCorsi.setBackground(CARD_BG);
@@ -93,10 +89,20 @@ public class PrenotaCorsoView extends JFrame {
         listaCorsi.setFont(new Font("SansSerif", Font.PLAIN, 13));
 
         JScrollPane scrollCorsi = new JScrollPane(listaCorsi);
-        scrollCorsi.setBorder(null);
+        scrollCorsi.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(new Color(70, 70, 70)),
+                "Corsi disponibili",
+                0, 0, new Font("SansSerif", Font.PLAIN, 12), TEXT_GRAY));
         scrollCorsi.getViewport().setBackground(CARD_BG);
+        scrollCorsi.setAlignmentX(Component.LEFT_ALIGNMENT);
+        scrollCorsi.setPreferredSize(new Dimension(0, 150));
+        scrollCorsi.setMaximumSize(new Dimension(Integer.MAX_VALUE, 180));
 
-        txtDescrizioneCorso = new JTextArea(5, 20);
+        card.add(scrollCorsi);
+        card.add(Box.createVerticalStrut(10));
+
+        // --- Descrizione corso ---
+        txtDescrizioneCorso = new JTextArea(4, 20);
         txtDescrizioneCorso.setEditable(false);
         txtDescrizioneCorso.setLineWrap(true);
         txtDescrizioneCorso.setWrapStyleWord(true);
@@ -110,20 +116,15 @@ public class PrenotaCorsoView extends JFrame {
                 BorderFactory.createLineBorder(new Color(70, 70, 70)),
                 "Descrizione corso",
                 0, 0, new Font("SansSerif", Font.PLAIN, 11), TEXT_GRAY));
-        scrollDescr.setPreferredSize(new Dimension(0, 120));
         scrollDescr.getViewport().setBackground(new Color(40, 40, 40));
+        scrollDescr.setAlignmentX(Component.LEFT_ALIGNMENT);
+        scrollDescr.setPreferredSize(new Dimension(0, 110));
+        scrollDescr.setMaximumSize(new Dimension(Integer.MAX_VALUE, 140));
 
-        panelCorsi.add(scrollCorsi, BorderLayout.CENTER);
-        panelCorsi.add(scrollDescr, BorderLayout.SOUTH);
+        card.add(scrollDescr);
+        card.add(Box.createVerticalStrut(10));
 
-        // --- Colonna destra: lezioni ---
-        JPanel panelLezioni = new JPanel(new BorderLayout());
-        panelLezioni.setBackground(CARD_BG);
-        panelLezioni.setBorder(BorderFactory.createTitledBorder(
-                BorderFactory.createLineBorder(new Color(70, 70, 70)),
-                "Date / orari disponibili",
-                0, 0, new Font("SansSerif", Font.PLAIN, 12), TEXT_GRAY));
-
+        // --- Lista lezioni ---
         modelLezioni = new DefaultListModel<>();
         listaLezioni = new JList<>(modelLezioni);
         listaLezioni.setBackground(CARD_BG);
@@ -132,17 +133,30 @@ public class PrenotaCorsoView extends JFrame {
         listaLezioni.setFont(new Font("SansSerif", Font.PLAIN, 13));
 
         JScrollPane scrollLezioni = new JScrollPane(listaLezioni);
-        scrollLezioni.setBorder(null);
+        scrollLezioni.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(new Color(70, 70, 70)),
+                "Date / orari disponibili",
+                0, 0, new Font("SansSerif", Font.PLAIN, 12), TEXT_GRAY));
         scrollLezioni.getViewport().setBackground(CARD_BG);
+        scrollLezioni.setAlignmentX(Component.LEFT_ALIGNMENT);
+        scrollLezioni.setPreferredSize(new Dimension(0, 180));
+        scrollLezioni.setMaximumSize(new Dimension(Integer.MAX_VALUE, 220));
 
-        panelLezioni.add(scrollLezioni, BorderLayout.CENTER);
+        card.add(scrollLezioni);
+        card.add(Box.createVerticalGlue());
 
-        center.add(panelCorsi);
-        center.add(panelLezioni);
+        // scroll che contiene la card
+        JScrollPane scrollCard = new JScrollPane(
+                card,
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
+        );
+        scrollCard.setBorder(null);
+        scrollCard.getViewport().setBackground(DARK_BG);
 
-        main.add(center, BorderLayout.CENTER);
+        main.add(scrollCard, BorderLayout.CENTER);
 
-        // FOOTER bottoni
+        // ================= FOOTER BOTTONI =================
         JPanel footer = new JPanel();
         footer.setBackground(DARK_BG);
         footer.setBorder(BorderFactory.createEmptyBorder(10, 20, 15, 20));
@@ -156,7 +170,7 @@ public class PrenotaCorsoView extends JFrame {
 
         main.add(footer, BorderLayout.SOUTH);
 
-        // LISTENER
+        // =============== LISTENER ===============
         listaCorsi.addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting() && controller != null) {
                 int idx = listaCorsi.getSelectedIndex();

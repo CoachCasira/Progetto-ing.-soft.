@@ -6,6 +6,8 @@ import org.apache.logging.log4j.Logger;
 
 import db.GestioneDB;
 import view.RegistrazioneView;
+import view.LoginView;   // <-- aggiunto
+// LoginController è nello stesso package "controller", quindi non serve import esplicito
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -113,6 +115,22 @@ public class RegistrazioneController {
             view.mostraMessaggioErrore(
                     "Errore di database durante la registrazione.");
         }
+    }
+
+    /**
+     * Gestisce il click su "Annulla":
+     * chiude la registrazione e riapre la schermata di Login.
+     */
+    public void handleAnnulla() {
+        logger.info("Registrazione annullata, ritorno alla schermata di login");
+
+        // chiudo la view di registrazione
+        view.dispose();
+
+        // riapro una nuova LoginView
+        LoginView loginView = new LoginView();
+        new LoginController(loginView);   // collega controller e view
+        loginView.setVisible(true);
     }
 
     // ---------- Metodi di supporto per controlli preliminari ----------

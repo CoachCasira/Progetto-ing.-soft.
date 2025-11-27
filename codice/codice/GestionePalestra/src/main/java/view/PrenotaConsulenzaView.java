@@ -45,7 +45,9 @@ public class PrenotaConsulenzaView extends JFrame {
     private void initUI() {
         setTitle("Prenota consulenza");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(700, 520);
+
+        // stessa dimensione di Home / Login
+        setSize(420, 650);
         setLocationRelativeTo(null);
         setResizable(false);
 
@@ -53,15 +55,15 @@ public class PrenotaConsulenzaView extends JFrame {
         main.setBackground(DARK_BG);
         setContentPane(main);
 
-        // HEADER
+        // ===== HEADER =======================================================
         JPanel header = new JPanel();
         header.setLayout(new BoxLayout(header, BoxLayout.Y_AXIS));
         header.setBackground(DARK_BG);
-        header.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 20));
+        header.setBorder(BorderFactory.createEmptyBorder(15, 20, 10, 20));
 
         JLabel lblTitolo = new JLabel("Prenota una consulenza");
         lblTitolo.setForeground(ORANGE);
-        lblTitolo.setFont(new Font("SansSerif", Font.BOLD, 22));
+        lblTitolo.setFont(new Font("SansSerif", Font.BOLD, 20));
         lblTitolo.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JLabel lblSotto = new JLabel("Seleziona il tipo di consulenza, la data, l'orario e il dipendente.");
@@ -75,13 +77,13 @@ public class PrenotaConsulenzaView extends JFrame {
 
         main.add(header, BorderLayout.NORTH);
 
-        // CARD CENTRALE (scrollabile)
+        // ===== CARD CENTRALE (scrollabile) ==================================
         JPanel card = new JPanel(new GridBagLayout());
         card.setBackground(CARD_BG);
-        card.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        card.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(8, 8, 8, 8);
+        gbc.insets = new Insets(8, 4, 8, 4);
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
@@ -107,7 +109,7 @@ public class PrenotaConsulenzaView extends JFrame {
         gbc.gridy = row++;
         card.add(rbIstr, gbc);
 
-        // Descrizione tipo (con scroll e altezza fissa)
+        // --- Descrizione tipo (scroll, altezza fissa) ---
         txtDescrizioneTipo = new JTextArea(4, 30);
         txtDescrizioneTipo.setEditable(false);
         txtDescrizioneTipo.setLineWrap(true);
@@ -116,7 +118,11 @@ public class PrenotaConsulenzaView extends JFrame {
         txtDescrizioneTipo.setForeground(Color.WHITE);
         txtDescrizioneTipo.setFont(new Font("SansSerif", Font.PLAIN, 12));
 
-        JScrollPane scrollDescrTipo = new JScrollPane(txtDescrizioneTipo);
+        JScrollPane scrollDescrTipo = new JScrollPane(
+                txtDescrizioneTipo,
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
+        );
         scrollDescrTipo.setBorder(BorderFactory.createTitledBorder(
                 BorderFactory.createLineBorder(new Color(70, 70, 70)),
                 "Dettagli consulenza",
@@ -171,7 +177,11 @@ public class PrenotaConsulenzaView extends JFrame {
         txtDescrizioneDipendente.setForeground(Color.WHITE);
         txtDescrizioneDipendente.setFont(new Font("SansSerif", Font.PLAIN, 12));
 
-        JScrollPane scrollDescrDip = new JScrollPane(txtDescrizioneDipendente);
+        JScrollPane scrollDescrDip = new JScrollPane(
+                txtDescrizioneDipendente,
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
+        );
         scrollDescrDip.setBorder(BorderFactory.createTitledBorder(
                 BorderFactory.createLineBorder(new Color(70, 70, 70)),
                 "Dettagli dipendente",
@@ -183,7 +193,7 @@ public class PrenotaConsulenzaView extends JFrame {
         gbc.gridy = row++;
         card.add(scrollDescrDip, gbc);
 
-        // Note opzionali (con scroll)
+        // --- Note opzionali (scroll) ---
         txtNote = new JTextArea(3, 30);
         txtNote.setLineWrap(true);
         txtNote.setWrapStyleWord(true);
@@ -191,7 +201,11 @@ public class PrenotaConsulenzaView extends JFrame {
         txtNote.setForeground(Color.WHITE);
         txtNote.setFont(new Font("SansSerif", Font.PLAIN, 12));
 
-        JScrollPane scrollNote = new JScrollPane(txtNote);
+        JScrollPane scrollNote = new JScrollPane(
+                txtNote,
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
+        );
         scrollNote.setBorder(BorderFactory.createTitledBorder(
                 BorderFactory.createLineBorder(new Color(70, 70, 70)),
                 "Note per il professionista (opzionali)",
@@ -204,12 +218,16 @@ public class PrenotaConsulenzaView extends JFrame {
         card.add(scrollNote, gbc);
 
         // Scrollpane che contiene tutta la card
-        JScrollPane scrollCard = new JScrollPane(card);
+        JScrollPane scrollCard = new JScrollPane(
+                card,
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
+        );
         scrollCard.setBorder(null);
         scrollCard.getViewport().setBackground(CARD_BG);
         main.add(scrollCard, BorderLayout.CENTER);
 
-        // FOOTER BOTTONI
+        // ===== FOOTER BOTTONI ===============================================
         JPanel buttons = new JPanel();
         buttons.setBackground(DARK_BG);
         buttons.setBorder(BorderFactory.createEmptyBorder(10, 20, 20, 20));
@@ -223,7 +241,7 @@ public class PrenotaConsulenzaView extends JFrame {
 
         main.add(buttons, BorderLayout.SOUTH);
 
-        // Listener radiobutton
+        // ===== LISTENER =====================================================
         rbPT.addActionListener(e -> {
             if (controller != null) controller.handleTipoSelezionato("PERSONAL_TRAINER");
         });
@@ -234,7 +252,6 @@ public class PrenotaConsulenzaView extends JFrame {
             if (controller != null) controller.handleTipoSelezionato("ISTRUTTORE_CORSO");
         });
 
-        // Listener combo (dipendente selezionato)
         comboDipendente.addActionListener(e -> {
             if (controller != null) {
                 String nome = getDipendenteSelezionato();

@@ -7,8 +7,8 @@ import model.Abbonamento;
 import model.Cliente;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import view.dialog.*;
 import view.*;
+import view.dialog.*;
 
 public class HomeController {
 
@@ -67,25 +67,49 @@ public class HomeController {
             return;
         }
 
+        // nascondo la Home mentre è aperta la finestra di dettaglio
+        view.setVisible(false);
         view.mostraDettaglioAbbonamento(abb);
+        // quando il dialog viene chiuso, torno a mostrare la Home
+        view.setVisible(true);
     }
 
     /** Vedi corsi prenotati */
     public void handleVediCorsi() {
         try {
             String testo = CorsoDAO.buildDettaglioIscrizioniPerCliente(cliente.getIdCliente());
+
+            // Nascondo la Home mentre è aperta la finestra "Dettagli corsi"
+            view.setVisible(false);
+
+            // Questo metodo apre un JDialog MODALE: ritorna solo quando il dialog viene chiuso
             view.mostraDettaglioCorsi(testo);
+
+            // Quando il dialog è stato chiuso (tasto "Chiudi" o disiscrizione), ri-mosto la Home
+            view.setVisible(true);
+
         } catch (Exception e) {
             e.printStackTrace();
             view.mostraMessaggioErrore("Errore nel caricamento dei corsi prenotati.");
         }
     }
 
+
     /** Vedi consulenze prenotate */
     public void handleVediConsulenza() {
         try {
-            String dettaglio = ConsulenzaDAO.buildDettaglioConsulenzePerCliente(cliente.getIdCliente());
+            String dettaglio = ConsulenzaDAO
+                    .buildDettaglioConsulenzePerCliente(cliente.getIdCliente());
+
+            // nascondo la Home mentre il dialog è aperto
+            view.setVisible(false);
+
+            // dialog modale: ritorna qui solo quando viene chiuso
             view.mostraDettaglioConsulenza(dettaglio);
+
+            // quando il dialog viene chiuso, ri-mosto la Home
+            view.setVisible(true);
+
         } catch (Exception e) {
             e.printStackTrace();
             view.mostraMessaggioErrore("Errore nel caricamento delle consulenze.");
@@ -160,12 +184,42 @@ public class HomeController {
 
     /** Apertura dialog disdetta consulenza */
     public void handleApriDisdettaConsulenza() {
+        try {
+            // se non ci sono consulenze future → solo messaggio, niente dialog
+            if (!ConsulenzaDAO.esistonoConsulenzeFuturePerCliente(cliente.getIdCliente())) {
+                view.mostraMessaggioInfo(
+                        "Non hai consulenze future prenotate da poter disdire.");
+                return;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            view.mostraMessaggioErrore(
+                    "Errore nel caricamento delle consulenze future.\n" +
+                    "Riprova più tardi.");
+            return;
+        }
+
         DisdiciConsulenzaDialog dialog = new DisdiciConsulenzaDialog(view, cliente);
         dialog.setVisible(true);
     }
 
     /** Apertura dialog disdetta corso */
     public void handleApriDisdettaCorso() {
+        try {
+            // analogo controllo per i corsi futuri
+            if (!CorsoDAO.esistonoIscrizioniFuturePerCliente(cliente.getIdCliente())) {
+                view.mostraMessaggioInfo(
+                        "Non hai corsi futuri prenotati da poter disdire.");
+                return;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            view.mostraMessaggioErrore(
+                    "Errore nel caricamento dei corsi prenotati.\n" +
+                    "Riprova più tardi.");
+            return;
+        }
+
         DisdiciCorsoDialog dialog = new DisdiciCorsoDialog(view, cliente);
         dialog.setVisible(true);
     }

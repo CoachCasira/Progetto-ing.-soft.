@@ -1,6 +1,8 @@
 package view;
 
 import controller.LoginController;
+import view.dialog.ThemedDialog;
+
 import javax.swing.*;
 import java.awt.*;
 import java.net.URL;

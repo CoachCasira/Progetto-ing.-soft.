@@ -3,9 +3,11 @@ package view;
 import controller.HomeController;
 import model.Abbonamento;
 import model.Cliente;
+import view.dialog.ThemedDialog;
 
 import javax.swing.*;
 import java.awt.*;
+import java.net.URL;
 
 public class HomeView extends JFrame {
 
@@ -13,14 +15,13 @@ public class HomeView extends JFrame {
 
     private static final Color DARK_BG   = new Color(20, 20, 20);
     private static final Color CARD_BG   = new Color(30, 30, 30);
+    private static final Color CARD_INNER_BG = new Color(35, 35, 35);
     private static final Color ORANGE    = new Color(255, 140, 0);
     private static final Color ORANGE_HO = new Color(255, 170, 40);
     private static final Color TEXT_GRAY = new Color(200, 200, 200);
 
     private final Cliente cliente;
     private HomeController controller;
-
-    private JPanel cardPanel;  // pannello centrale, ci serve per revalidate()
 
     private JButton btnVediAbbonamento;
     private JButton btnPrenotaCorso;
@@ -42,8 +43,9 @@ public class HomeView extends JFrame {
     private void initUI() {
         setTitle("GestionePalestra - Home");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        // un po' più alta così tutti i bottoni si vedono comodi
-        setSize(720, 520);
+
+        // STESSA DIMENSIONE DELLA LOGIN
+        setSize(420, 650);
         setLocationRelativeTo(null);
         setResizable(false);
 
@@ -51,169 +53,222 @@ public class HomeView extends JFrame {
         mainPanel.setBackground(DARK_BG);
         setContentPane(mainPanel);
 
-        // --------- HEADER ---------
-        JPanel header = new JPanel();
-        header.setLayout(new BoxLayout(header, BoxLayout.Y_AXIS));
+        // ========== HEADER: logo + testo + logout ==========
+        JPanel header = new JPanel(new BorderLayout());
         header.setBackground(DARK_BG);
-        header.setBorder(BorderFactory.createEmptyBorder(15, 30, 5, 30));
+        header.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+
+        // pannello centrale con logo + "Area personale" + benvenuto
+        JPanel centerHeader = new JPanel();
+        centerHeader.setOpaque(false);
+        centerHeader.setLayout(new BoxLayout(centerHeader, BoxLayout.Y_AXIS));
+        centerHeader.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JLabel logoLabel = new JLabel();
+        logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        ImageIcon logoIcon = caricaLogo();
+        if (logoIcon != null) {
+            logoLabel.setIcon(logoIcon);
+        }
+        centerHeader.add(logoLabel);
+        centerHeader.add(Box.createVerticalStrut(10));
 
         JLabel lblArea = new JLabel("Area personale");
-        lblArea.setFont(new Font("SansSerif", Font.BOLD, 28));
+        lblArea.setFont(new Font("SansSerif", Font.BOLD, 17));
         lblArea.setForeground(ORANGE);
-        lblArea.setAlignmentX(Component.LEFT_ALIGNMENT);
+        lblArea.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        String benvenutoTxt =
-                "Benvenuto, " + cliente.getNome() + " " + cliente.getCognome();
+        String benvenutoTxt = "Benvenuto, " +
+                cliente.getNome() + " " + cliente.getCognome();
         JLabel lblWelcome = new JLabel(benvenutoTxt);
-        lblWelcome.setFont(new Font("SansSerif", Font.PLAIN, 18));
+        lblWelcome.setFont(new Font("SansSerif", Font.PLAIN, 14));
         lblWelcome.setForeground(Color.WHITE);
-        lblWelcome.setAlignmentX(Component.LEFT_ALIGNMENT);
+        lblWelcome.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        header.add(lblArea);
-        header.add(Box.createVerticalStrut(5));
-        header.add(lblWelcome);
+        centerHeader.add(lblArea);
+        centerHeader.add(Box.createVerticalStrut(4));
+        centerHeader.add(lblWelcome);
 
+        header.add(centerHeader, BorderLayout.CENTER);
+
+     // pulsante Logout a destra (allineato in alto)
+        btnLogout = creaBottoneSoloBordo("Logout");
+        btnLogout.setPreferredSize(new Dimension(120, 36));
+
+        JPanel logoutWrapper = new JPanel();
+        logoutWrapper.setOpaque(false);
+        logoutWrapper.setLayout(new BoxLayout(logoutWrapper, BoxLayout.Y_AXIS));
+
+        btnLogout.setAlignmentX(Component.CENTER_ALIGNMENT);
+        logoutWrapper.add(btnLogout);                 // in alto
+        logoutWrapper.add(Box.createVerticalGlue());  // spinge verso l'alto
+
+        header.add(logoutWrapper, BorderLayout.EAST);
+
+        // SPACER SINISTRO con stessa larghezza del bottone Logout
+        JPanel leftSpacer = new JPanel();
+        leftSpacer.setOpaque(false);
+        leftSpacer.setPreferredSize(new Dimension(
+                btnLogout.getPreferredSize().width,
+                btnLogout.getPreferredSize().height
+        ));
+        header.add(leftSpacer, BorderLayout.WEST);
         mainPanel.add(header, BorderLayout.NORTH);
 
-        // --------- CARD CENTRALE ---------
-        cardPanel = new JPanel();
-        cardPanel.setBackground(CARD_BG);
-        cardPanel.setBorder(BorderFactory.createEmptyBorder(20, 80, 20, 80));
-        cardPanel.setLayout(new BoxLayout(cardPanel, BoxLayout.Y_AXIS));
+        // ========== CONTENUTO SCORREVOLE (card) ==========
+
+        JPanel scrollContent = new JPanel();
+        scrollContent.setBackground(DARK_BG);
+        scrollContent.setLayout(new BoxLayout(scrollContent, BoxLayout.Y_AXIS));
+        // margini simili alla Login
+        scrollContent.setBorder(BorderFactory.createEmptyBorder(10, 30, 20, 30));
 
         JLabel lblScelta = new JLabel("Scegli un'operazione:");
-        lblScelta.setFont(new Font("SansSerif", Font.PLAIN, 18));
+        lblScelta.setFont(new Font("SansSerif", Font.PLAIN, 20));
         lblScelta.setForeground(TEXT_GRAY);
         lblScelta.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        cardPanel.add(lblScelta);
-        cardPanel.add(Box.createVerticalStrut(18));
+        scrollContent.add(Box.createVerticalStrut(5));
+        scrollContent.add(lblScelta);
+        scrollContent.add(Box.createVerticalStrut(15));
 
         btnVediAbbonamento    = creaBottoneArancione("Vedi abbonamento");
         btnPrenotaCorso       = creaBottoneArancione("Iscriviti corso");
         btnPrenotaConsulenza  = creaBottoneArancione("Prenota consulenza");
         btnVediConsulenza     = creaBottoneSoloBordo("Vedi consulenze prenotate");
-        btnVediCorsi          = creaBottoneSoloBordo("Vedi corsi ");
+        btnVediCorsi          = creaBottoneSoloBordo("Vedi corsi");
         btnDisdiciAbbonamento = creaBottoneSoloBordo("Disdici abbonamento");
-        btnLogout             = creaBottoneSoloBordo("Logout");
 
-        btnVediAbbonamento.setAlignmentX(Component.CENTER_ALIGNMENT);
-        btnPrenotaCorso.setAlignmentX(Component.CENTER_ALIGNMENT);
-        btnPrenotaConsulenza.setAlignmentX(Component.CENTER_ALIGNMENT);
-        btnVediConsulenza.setAlignmentX(Component.CENTER_ALIGNMENT);
-        btnVediCorsi.setAlignmentX(Component.CENTER_ALIGNMENT);
-        btnDisdiciAbbonamento.setAlignmentX(Component.CENTER_ALIGNMENT);
-        btnLogout.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JPanel cardAbb = creaSectionPanel("Abbonamento");
+        cardAbb.add(Box.createVerticalStrut(10));
+        cardAbb.add(wrapButtonFullWidth(btnVediAbbonamento));
+        cardAbb.add(Box.createVerticalStrut(8));
+        cardAbb.add(wrapButtonFullWidth(btnDisdiciAbbonamento));
+        cardAbb.add(Box.createVerticalStrut(4));
 
-        int GAP = 10;
+        JPanel cardCorsi = creaSectionPanel("Corsi");
+        cardCorsi.add(Box.createVerticalStrut(10));
+        cardCorsi.add(wrapButtonFullWidth(btnPrenotaCorso));
+        cardCorsi.add(Box.createVerticalStrut(8));
+        cardCorsi.add(wrapButtonFullWidth(btnVediCorsi));
+        cardCorsi.add(Box.createVerticalStrut(4));
 
-        cardPanel.add(btnVediAbbonamento);
-        cardPanel.add(Box.createVerticalStrut(GAP));
-        cardPanel.add(btnPrenotaCorso);
-        cardPanel.add(Box.createVerticalStrut(GAP));
-        cardPanel.add(btnVediCorsi);
-        cardPanel.add(Box.createVerticalStrut(GAP));
-        cardPanel.add(btnPrenotaConsulenza);
-        cardPanel.add(Box.createVerticalStrut(GAP));
-        cardPanel.add(btnVediConsulenza);
-        cardPanel.add(Box.createVerticalStrut(GAP));
-        cardPanel.add(btnDisdiciAbbonamento);
-        cardPanel.add(Box.createVerticalStrut(15));
-        cardPanel.add(btnLogout);
+        JPanel cardCons = creaSectionPanel("Consulenze");
+        cardCons.add(Box.createVerticalStrut(10));
+        cardCons.add(wrapButtonFullWidth(btnPrenotaConsulenza));
+        cardCons.add(Box.createVerticalStrut(8));
+        cardCons.add(wrapButtonFullWidth(btnVediConsulenza));
+        cardCons.add(Box.createVerticalStrut(4));
 
-        JPanel centerWrapper = new JPanel(new GridBagLayout());
-        centerWrapper.setBackground(DARK_BG);
-        centerWrapper.add(cardPanel);
+        scrollContent.add(cardAbb);
+        scrollContent.add(Box.createVerticalStrut(15));
+        scrollContent.add(cardCorsi);
+        scrollContent.add(Box.createVerticalStrut(15));
+        scrollContent.add(cardCons);
+        scrollContent.add(Box.createVerticalGlue());
 
-        mainPanel.add(centerWrapper, BorderLayout.CENTER);
+        JScrollPane scrollPane = new JScrollPane(
+                scrollContent,
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
+        );
+        scrollPane.setBorder(null);
+        scrollPane.getViewport().setBackground(DARK_BG);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
 
-        // --------- FOOTER ---------
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
+
+        // ========== FOOTER ==========
         JLabel lblFooter = new JLabel(
                 "GestionePalestra – versione demo progetto",
                 SwingConstants.CENTER);
         lblFooter.setForeground(new Color(160, 160, 160));
         lblFooter.setFont(new Font("SansSerif", Font.PLAIN, 11));
-        lblFooter.setBorder(BorderFactory.createEmptyBorder(8, 5, 8, 5));
+        lblFooter.setBorder(BorderFactory.createEmptyBorder(6, 5, 6, 5));
 
         JPanel footerPanel = new JPanel(new BorderLayout());
         footerPanel.setBackground(DARK_BG);
         footerPanel.add(lblFooter, BorderLayout.CENTER);
         mainPanel.add(footerPanel, BorderLayout.SOUTH);
 
-        // visibilità / abilitazione bottoni corsi
         aggiornaVisibilitaCorsi();
 
-        // --------- LISTENER ---------
+        // LISTENER
         btnVediAbbonamento.addActionListener(e -> {
             if (controller != null) controller.handleVediAbbonamento();
         });
-
         btnPrenotaCorso.addActionListener(e -> {
             if (controller != null) controller.handlePrenotaCorso();
         });
-
         btnPrenotaConsulenza.addActionListener(e -> {
             if (controller != null) controller.handlePrenotaConsulenza();
         });
-
         btnVediConsulenza.addActionListener(e -> {
             if (controller != null) controller.handleVediConsulenza();
         });
-
         btnVediCorsi.addActionListener(e -> {
             if (controller != null) controller.handleVediCorsi();
         });
-
         btnDisdiciAbbonamento.addActionListener(e -> {
             if (controller != null) controller.handleDisdiciAbbonamento();
         });
-
         btnLogout.addActionListener(e -> {
             if (controller != null) controller.handleLogout();
         });
     }
 
-    /**
-     * Bottoni corsi:
-     *  - se abbonamento tipo CORSI → visibili e abilitati
-     *  - altrimenti → completamente nascosti.
-     */
+ // ========== Logo helper ==========
+    private ImageIcon caricaLogo() {
+        try {
+            URL url = getClass().getClassLoader()
+                    .getResource("immagini/logo.png");
+            if (url == null) return null;
+
+            Image img = new ImageIcon(url).getImage();
+            Image scaled = img.getScaledInstance(80, 80, Image.SCALE_SMOOTH);
+            return new ImageIcon(scaled);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
+
+
+    // visibilità/abilitazione corsi
     private void aggiornaVisibilitaCorsi() {
         Abbonamento abb = cliente != null ? cliente.getAbbonamento() : null;
         boolean haCorsi = abb != null &&
                 abb.getTipo() != null &&
                 abb.getTipo().equalsIgnoreCase("CORSI");
 
-        btnPrenotaCorso.setVisible(haCorsi);
-        btnVediCorsi.setVisible(haCorsi);
+        btnPrenotaCorso.setEnabled(haCorsi);
+        btnVediCorsi.setEnabled(haCorsi);
 
         if (!haCorsi) {
+            btnPrenotaCorso.setToolTipText("Disponibile solo per abbonamento di tipo CORSI.");
+            btnVediCorsi.setToolTipText("Disponibile solo per abbonamento di tipo CORSI.");
+        } else {
             btnPrenotaCorso.setToolTipText(null);
             btnVediCorsi.setToolTipText(null);
-        }
-
-        if (cardPanel != null) {
-            cardPanel.revalidate();
-            cardPanel.repaint();
         }
     }
 
     // ========= Factory bottoni =========
     private JButton creaBottoneArancione(String testo) {
         JButton b = new JButton(testo);
-        b.setPreferredSize(new Dimension(240, 40));
-        b.setMaximumSize(new Dimension(260, 40));
+        b.setPreferredSize(new Dimension(260, 44));
         b.setBackground(ORANGE);
         b.setForeground(Color.BLACK);
         b.setFocusPainted(false);
         b.setBorder(BorderFactory.createEmptyBorder(8, 20, 8, 20));
         b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         b.setOpaque(true);
+        b.setFont(new Font("SansSerif", Font.BOLD, 15));
 
         b.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseEntered(java.awt.event.MouseEvent e) {
-                b.setBackground(ORANGE_HO);
+                if (b.isEnabled()) b.setBackground(ORANGE_HO);
             }
             @Override
             public void mouseExited(java.awt.event.MouseEvent e) {
@@ -225,19 +280,19 @@ public class HomeView extends JFrame {
 
     private JButton creaBottoneSoloBordo(String testo) {
         JButton b = new JButton(testo);
-        b.setPreferredSize(new Dimension(240, 38));
-        b.setMaximumSize(new Dimension(260, 38));
+        b.setPreferredSize(new Dimension(260, 40));
         b.setBackground(DARK_BG);
         b.setForeground(ORANGE);
         b.setFocusPainted(false);
         b.setBorder(BorderFactory.createLineBorder(ORANGE));
         b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         b.setOpaque(true);
+        b.setFont(new Font("SansSerif", Font.PLAIN, 14));
 
         b.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseEntered(java.awt.event.MouseEvent e) {
-                b.setBackground(new Color(40, 40, 40));
+                if (b.isEnabled()) b.setBackground(new Color(40, 40, 40));
             }
             @Override
             public void mouseExited(java.awt.event.MouseEvent e) {
@@ -247,20 +302,60 @@ public class HomeView extends JFrame {
         return b;
     }
 
-    // ======================================================
-    // Finestra custom per i dettagli dell’abbonamento
-    // ======================================================
+    private JPanel creaSectionPanel(String titolo) {
+        JPanel p = new JPanel();
+        p.setBackground(CARD_INNER_BG);
+        p.setBorder(BorderFactory.createEmptyBorder(14, 16, 14, 16));
+        p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
+
+        JLabel lbl = new JLabel(titolo);
+        lbl.setForeground(ORANGE);
+        lbl.setFont(new Font("SansSerif", Font.BOLD, 18));
+        lbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        p.add(lbl);
+        p.add(Box.createVerticalStrut(4));
+
+        JSeparator sep = new JSeparator();
+        sep.setForeground(new Color(80, 80, 80));
+        sep.setBackground(new Color(80, 80, 80));
+        sep.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
+
+        JPanel sepWrapper = new JPanel();
+        sepWrapper.setOpaque(false);
+        sepWrapper.setLayout(new BoxLayout(sepWrapper, BoxLayout.X_AXIS));
+        sepWrapper.add(sep);
+
+        p.add(sepWrapper);
+
+        return p;
+    }
+
+    private JComponent wrapButtonFullWidth(JButton b) {
+        JPanel p = new JPanel();
+        p.setLayout(new BoxLayout(p, BoxLayout.X_AXIS));
+        p.setOpaque(false);
+        p.add(Box.createHorizontalGlue());
+        b.setAlignmentX(Component.CENTER_ALIGNMENT);
+        p.add(b);
+        p.add(Box.createHorizontalGlue());
+        return p;
+    }
+
     public void mostraDettaglioAbbonamento(Abbonamento abb) {
         JDialog dialog = new JDialog(this, "Dettagli abbonamento", true);
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        dialog.setSize(500, 320);
-        dialog.setLocationRelativeTo(this);
+
+        // stessa dimensione della Home / Login
+        dialog.setSize(420, 650);
         dialog.setResizable(false);
+        dialog.setLocationRelativeTo(this);
 
         JPanel main = new JPanel(new BorderLayout());
         main.setBackground(DARK_BG);
         dialog.setContentPane(main);
 
+        // HEADER
         JPanel header = new JPanel();
         header.setBackground(DARK_BG);
         header.setBorder(BorderFactory.createEmptyBorder(15, 20, 10, 20));
@@ -274,6 +369,7 @@ public class HomeView extends JFrame {
         header.add(lblTitle);
         main.add(header, BorderLayout.NORTH);
 
+        // AREA TESTO + SCROLL
         JTextArea txt = new JTextArea();
         txt.setEditable(false);
         txt.setLineWrap(true);
@@ -283,8 +379,13 @@ public class HomeView extends JFrame {
         txt.setFont(new Font("SansSerif", Font.PLAIN, 13));
         txt.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
         txt.setText(abb.getDescrizioneCompleta());
+        txt.setCaretPosition(0);
 
-        JScrollPane scroll = new JScrollPane(txt);
+        JScrollPane scroll = new JScrollPane(
+                txt,
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
+        );
         scroll.setBorder(BorderFactory.createLineBorder(new Color(70, 70, 70)));
         scroll.getViewport().setBackground(CARD_BG);
 
@@ -294,6 +395,7 @@ public class HomeView extends JFrame {
         center.add(scroll, BorderLayout.CENTER);
         main.add(center, BorderLayout.CENTER);
 
+        // FOOTER CON BOTTONE CHIUDI
         JPanel footer = new JPanel();
         footer.setBackground(DARK_BG);
         footer.setBorder(BorderFactory.createEmptyBorder(10, 0, 15, 0));
@@ -307,13 +409,13 @@ public class HomeView extends JFrame {
         dialog.setVisible(true);
     }
 
-    // ======================================================
-    // Finestra custom per i dettagli delle consulenze
-    // ======================================================
+
     public void mostraDettaglioConsulenza(String testoDettaglio) {
         JDialog dialog = new JDialog(this, "Dettagli consulenza", true);
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        dialog.setSize(550, 360);
+
+        // stessa “taglia telefono” della Home
+        dialog.setSize(420, 650);
         dialog.setLocationRelativeTo(this);
         dialog.setResizable(false);
 
@@ -321,6 +423,7 @@ public class HomeView extends JFrame {
         main.setBackground(DARK_BG);
         dialog.setContentPane(main);
 
+        // HEADER
         JPanel header = new JPanel();
         header.setBackground(DARK_BG);
         header.setBorder(BorderFactory.createEmptyBorder(15, 20, 10, 20));
@@ -334,6 +437,7 @@ public class HomeView extends JFrame {
         header.add(lblTitle);
         main.add(header, BorderLayout.NORTH);
 
+        // TESTO DETTAGLIO (scrollabile)
         JTextArea txt = new JTextArea();
         txt.setEditable(false);
         txt.setLineWrap(true);
@@ -345,7 +449,11 @@ public class HomeView extends JFrame {
         txt.setText(testoDettaglio);
         txt.setCaretPosition(0);
 
-        JScrollPane scroll = new JScrollPane(txt);
+        JScrollPane scroll = new JScrollPane(
+                txt,
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
+        );
         scroll.setBorder(BorderFactory.createLineBorder(new Color(70, 70, 70)));
         scroll.getViewport().setBackground(CARD_BG);
 
@@ -355,12 +463,18 @@ public class HomeView extends JFrame {
         center.add(scroll, BorderLayout.CENTER);
         main.add(center, BorderLayout.CENTER);
 
-        JPanel footer = new JPanel();
+        // FOOTER con bottoni
+        JPanel footer = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
         footer.setBackground(DARK_BG);
         footer.setBorder(BorderFactory.createEmptyBorder(10, 0, 15, 0));
 
         JButton btnDisdici = creaBottoneSoloBordo("Disdici consulenza...");
         JButton btnChiudi  = creaBottoneSoloBordo("Chiudi");
+
+        // riduco la larghezza per farli stare affiancati
+        Dimension btnSize = new Dimension(160, 40);
+        btnDisdici.setPreferredSize(btnSize);
+        btnChiudi.setPreferredSize(btnSize);
 
         btnDisdici.addActionListener(e -> {
             if (controller != null) {
@@ -372,7 +486,6 @@ public class HomeView extends JFrame {
         btnChiudi.addActionListener(e -> dialog.dispose());
 
         footer.add(btnDisdici);
-        footer.add(Box.createHorizontalStrut(15));
         footer.add(btnChiudi);
 
         main.add(footer, BorderLayout.SOUTH);
@@ -380,20 +493,21 @@ public class HomeView extends JFrame {
         dialog.setVisible(true);
     }
 
-    // ======================================================
-    // Finestra custom per i dettagli dei corsi prenotati
-    // ======================================================
+
     public void mostraDettaglioCorsi(String testoDettaglio) {
         JDialog dialog = new JDialog(this, "Dettagli corsi", true);
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        dialog.setSize(550, 360);
-        dialog.setLocationRelativeTo(this);
         dialog.setResizable(false);
+
+        // stessa dimensione della Home (layout stile telefono)
+        dialog.setSize(420, 650);
+        dialog.setLocationRelativeTo(this);
 
         JPanel main = new JPanel(new BorderLayout());
         main.setBackground(DARK_BG);
         dialog.setContentPane(main);
 
+        // HEADER
         JPanel header = new JPanel();
         header.setBackground(DARK_BG);
         header.setBorder(BorderFactory.createEmptyBorder(15, 20, 10, 20));
@@ -407,6 +521,7 @@ public class HomeView extends JFrame {
         header.add(lblTitle);
         main.add(header, BorderLayout.NORTH);
 
+        // AREA TESTO
         JTextArea txt = new JTextArea();
         txt.setEditable(false);
         txt.setLineWrap(true);
@@ -414,9 +529,13 @@ public class HomeView extends JFrame {
         txt.setBackground(CARD_BG);
         txt.setForeground(Color.WHITE);
         txt.setFont(new Font("SansSerif", Font.PLAIN, 13));
-        txt.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+        txt.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         txt.setText(testoDettaglio);
         txt.setCaretPosition(0);
+
+        // guida per restare "stretti" in larghezza
+        txt.setColumns(26);
+        txt.setRows(18);
 
         JScrollPane scroll = new JScrollPane(txt);
         scroll.setBorder(BorderFactory.createLineBorder(new Color(70, 70, 70)));
@@ -424,13 +543,15 @@ public class HomeView extends JFrame {
 
         JPanel center = new JPanel(new BorderLayout());
         center.setBackground(DARK_BG);
-        center.setBorder(BorderFactory.createEmptyBorder(0, 20, 10, 20));
+        center.setBorder(BorderFactory.createEmptyBorder(0, 20, 5, 20));
         center.add(scroll, BorderLayout.CENTER);
         main.add(center, BorderLayout.CENTER);
 
+        // FOOTER
         JPanel footer = new JPanel();
         footer.setBackground(DARK_BG);
-        footer.setBorder(BorderFactory.createEmptyBorder(10, 0, 15, 0));
+        footer.setBorder(BorderFactory.createEmptyBorder(10, 20, 15, 20));
+        footer.setLayout(new BoxLayout(footer, BoxLayout.X_AXIS));
 
         JButton btnDisdici = creaBottoneSoloBordo("Disiscriviti da un corso...");
         JButton btnChiudi  = creaBottoneSoloBordo("Chiudi");
@@ -445,7 +566,7 @@ public class HomeView extends JFrame {
         btnChiudi.addActionListener(e -> dialog.dispose());
 
         footer.add(btnDisdici);
-        footer.add(Box.createHorizontalStrut(15));
+        footer.add(Box.createHorizontalStrut(10));
         footer.add(btnChiudi);
 
         main.add(footer, BorderLayout.SOUTH);
@@ -454,7 +575,6 @@ public class HomeView extends JFrame {
     }
 
 
-    // =================== messaggi info/errore ===================
     public void mostraMessaggioInfo(String msg) {
         ThemedDialog.showMessage(this, "Info", msg, false);
     }

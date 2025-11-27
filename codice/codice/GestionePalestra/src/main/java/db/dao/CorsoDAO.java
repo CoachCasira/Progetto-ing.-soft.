@@ -399,7 +399,10 @@ public class CorsoDAO {
                 "WHERE I.ID_CLIENTE = ? " +
                 "ORDER BY L.DATA_LEZIONE, L.ORA_LEZIONE";
 
-        StringBuilder sb = new StringBuilder();
+        StringBuilder futureSb = new StringBuilder();
+        StringBuilder pastSb   = new StringBuilder();
+
+        LocalDateTime now = LocalDateTime.now();
 
         try (Connection conn = GestioneDB.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -408,6 +411,7 @@ public class CorsoDAO {
 
             try (ResultSet rs = ps.executeQuery()) {
                 boolean any = false;
+
                 while (rs.next()) {
                     any = true;
 
@@ -420,22 +424,43 @@ public class CorsoDAO {
                     int pren = rs.getInt("POSTI_PRENOTATI");
                     String nomeIstr = rs.getString("NOME_IST") + " " + rs.getString("COGNOME_IST");
 
-                    sb.append("- ").append(data).append(" ore ").append(ora)
-                      .append("\nCorso: ").append(nomeCorso)
-                      .append("\nIstruttore: ").append(nomeIstr)
-                      .append("\nDurata: ").append(durata).append(" minuti")
-                      .append("\nPosti: ").append(pren).append("/").append(tot)
-                      .append("\nDescrizione: ").append(descr)
-                      .append("\n\n");
+                    LocalDateTime inizio = LocalDateTime.of(data, ora);
+
+                    StringBuilder target = inizio.isBefore(now) ? pastSb : futureSb;
+
+                    target.append("- ").append(data).append(" ore ").append(ora)
+                          .append("\nCorso: ").append(nomeCorso)
+                          .append("\nIstruttore: ").append(nomeIstr)
+                          .append("\nDurata: ").append(durata).append(" minuti")
+                          .append("\nPosti: ").append(pren).append("/").append(tot)
+                          .append("\nDescrizione: ").append(descr)
+                          .append("\n\n");
                 }
+
                 if (!any) {
-                    sb.append("Non hai ancora nessuna iscrizione ai corsi.\n");
+                    return "Non hai ancora nessuna iscrizione ai corsi.\n";
                 }
             }
         }
 
+        StringBuilder sb = new StringBuilder();
+
+        if (futureSb.length() > 0) {
+            sb.append("Corsi futuri:\n\n");
+            sb.append(futureSb);
+        }
+
+        if (pastSb.length() > 0) {
+            if (futureSb.length() > 0) {
+                sb.append("\n"); // riga vuota di separazione
+            }
+            sb.append("Corsi già svolti:\n\n");
+            sb.append(pastSb);
+        }
+
         return sb.toString();
     }
+
 
     /** Ritorna true se esiste almeno un corso nel catalogo. */
     public static boolean esistonoCorsi() throws Exception {

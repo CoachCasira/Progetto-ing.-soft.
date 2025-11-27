@@ -7,7 +7,7 @@ import model.Cliente;
 import model.Consulenza;
 import view.HomeView;
 import view.PrenotaConsulenzaView;
-import view.ThemedDialog;
+import view.dialog.ThemedDialog;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -199,8 +199,8 @@ public class PrenotaConsulenzaController {
     }
 
     public void handleAnnulla() {
-        // Torna semplicemente all’home senza salvare nulla
-        view.dispose();
+        view.dispose();  // chiudo la schermata di prenotazione
+
         HomeView home = new HomeView(cliente);
         new HomeController(home, cliente);
         home.setVisible(true);

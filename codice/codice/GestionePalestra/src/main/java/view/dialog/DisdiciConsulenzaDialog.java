@@ -3,10 +3,11 @@ package view.dialog;
 import db.dao.ConsulenzaDAO;
 import db.dao.ConsulenzaDAO.ConsulenzaInfo;
 import model.Cliente;
-import view.ThemedDialog;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,14 +34,29 @@ public class DisdiciConsulenzaDialog extends JDialog {
         this.parent = parent;
         this.cliente = cliente;
 
+        // nascondo la Home quando apro il dialog
+        if (parent != null) {
+            parent.setVisible(false);
+        }
+
         initUI();
         caricaConsulenze();
     }
 
     private void initUI() {
-        setSize(600, 380);
-        setLocationRelativeTo(parent);
+        // stessa dimensione di Home/Login
+        setSize(420, 650);
+        setLocationRelativeTo(null);
         setResizable(false);
+
+        // quando l'utente chiude con la X, torno alla Home
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                chiudiERitornaAllaHome();
+            }
+        });
 
         JPanel main = new JPanel(new BorderLayout());
         main.setBackground(DARK_BG);
@@ -96,7 +112,7 @@ public class DisdiciConsulenzaDialog extends JDialog {
         JButton btnChiudi  = creaBottoneSoloBordo("Annulla");
 
         btnDisdici.addActionListener(e -> handleDisdici());
-        btnChiudi.addActionListener(e -> dispose());
+        btnChiudi.addActionListener(e -> chiudiERitornaAllaHome());
 
         footer.add(btnDisdici);
         footer.add(Box.createHorizontalStrut(15));
@@ -110,9 +126,9 @@ public class DisdiciConsulenzaDialog extends JDialog {
             consulenzeFuture = ConsulenzaDAO.getConsulenzeFuturePerCliente(cliente.getIdCliente());
             listModel.clear();
 
-            // per sicurezza: se non ce ne sono, chiudo il dialog in silenzio
+            // se non ci sono consulenze future, chiudo e torno alla Home
             if (consulenzeFuture.isEmpty()) {
-                dispose();
+                chiudiERitornaAllaHome();
                 return;
             }
 
@@ -134,13 +150,13 @@ public class DisdiciConsulenzaDialog extends JDialog {
                     "Errore",
                     "Errore nel caricamento delle consulenze future.",
                     true);
-            dispose();
+            chiudiERitornaAllaHome();
         }
     }
 
     private void handleDisdici() {
         if (consulenzeFuture == null || consulenzeFuture.isEmpty()) {
-            dispose();
+            chiudiERitornaAllaHome();
             return;
         }
 
@@ -164,7 +180,7 @@ public class DisdiciConsulenzaDialog extends JDialog {
             ThemedDialog.showMessage(this,
                     "Impossibile disdire",
                     "La consulenza selezionata inizia tra meno di 24 ore.\n" +
-                    "Non è più possibile disdirla.",
+                            "Non è più possibile disdirla.",
                     true);
             return;
         }
@@ -186,7 +202,8 @@ public class DisdiciConsulenzaDialog extends JDialog {
                     "Info",
                     "Consulenza disdetta con successo.",
                     false);
-            dispose();
+
+            chiudiERitornaAllaHome();
 
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -196,6 +213,16 @@ public class DisdiciConsulenzaDialog extends JDialog {
                     true);
         }
     }
+
+    /** Chiude il dialog e rende di nuovo visibile la Home. */
+    private void chiudiERitornaAllaHome() {
+        if (parent != null) {
+            parent.setVisible(true);
+        }
+        dispose();
+    }
+
+    // ========== stile bottoni ==========
 
     private JButton creaBottoneArancione(String testo) {
         JButton b = new JButton(testo);

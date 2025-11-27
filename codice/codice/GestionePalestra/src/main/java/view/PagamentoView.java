@@ -3,6 +3,7 @@ package view;
 import controller.PagamentoController;
 import model.Abbonamento;
 import model.Cliente;
+import view.dialog.ThemedDialog;
 
 import javax.swing.*;
 import java.awt.*;

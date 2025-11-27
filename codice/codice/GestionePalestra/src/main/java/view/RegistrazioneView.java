@@ -1,6 +1,7 @@
 package view;
 
 import controller.RegistrazioneController;
+import view.dialog.ThemedDialog;
 
 import javax.swing.*;
 import java.awt.*;
@@ -41,7 +42,7 @@ public class RegistrazioneView extends JFrame {
     private void initUI() {
         setTitle("Registrazione nuovo cliente");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(430, 700);           // un po' più alta
+        setSize(420, 650);           // stessa logica "telefono" come login
         setLocationRelativeTo(null);
         setResizable(false);
 
@@ -97,7 +98,6 @@ public class RegistrazioneView extends JFrame {
 
         int row = 0;
 
-        // helper per aggiungere label + field
         // Username
         JLabel lblUsername = creaLabelCampo("Username");
         txtUsername = creaTextField();
@@ -297,11 +297,9 @@ public class RegistrazioneView extends JFrame {
 
     private void onConfermaClicked() {
         if (controller == null) {
-        	ThemedDialog.showMessage(this, "Errore", "Controller non impostato!", true);
-
+            ThemedDialog.showMessage(this, "Errore", "Controller non impostato!", true);
             return;
         }
-
 
         String username = txtUsername.getText().trim();
         String password = new String(txtPassword.getPassword());
@@ -317,7 +315,12 @@ public class RegistrazioneView extends JFrame {
     }
 
     private void onAnnullaClicked() {
-        dispose();
+        if (controller != null) {
+            controller.handleAnnulla();
+        } else {
+            // fallback di sicurezza
+            dispose();
+        }
     }
 
     public void mostraMessaggioInfo(String msg) {
@@ -329,4 +332,3 @@ public class RegistrazioneView extends JFrame {
     }
 
 }
-

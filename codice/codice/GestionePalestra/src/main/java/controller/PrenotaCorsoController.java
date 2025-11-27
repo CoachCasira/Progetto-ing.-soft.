@@ -6,7 +6,7 @@ import db.dao.CorsoDAO.LezioneInfo;
 import model.Cliente;
 import view.HomeView;
 import view.PrenotaCorsoView;
-import view.ThemedDialog;
+import view.dialog.ThemedDialog;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
