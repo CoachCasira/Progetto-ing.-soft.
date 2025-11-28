@@ -28,94 +28,102 @@ public class RegistrazioneController {
     }
 
     public void handleConferma(String username,
-                               String password,
-                               String nome,
-                               String cognome,
-                               String cf,
-                               String luogoNascita,
-                               String dataNascita,  // come stringa "yyyy-MM-dd"
-                               String iban) {
+            String password,
+            String nome,
+            String cognome,
+            String cf,
+            String luogoNascita,
+            String dataNascita,  // come stringa "yyyy-MM-dd"
+            String iban) {
 
-        // 1) Validazione minima
-        if (username.isEmpty() || password.isEmpty() ||
-                nome.isEmpty() || cognome.isEmpty() || cf.isEmpty()) {
-            view.mostraMessaggioErrore(
-                    "Compilare tutti i campi obbligatori (username, password, nome, cognome, CF).");
-            return;
-        }
+// 1) Validazione minima
+if (username.isEmpty() || password.isEmpty() ||
+nome.isEmpty() || cognome.isEmpty() || cf.isEmpty()) {
+view.mostraMessaggioErrore(
+ "Compilare tutti i campi obbligatori (username, password, nome, cognome, CF).");
+return;
+}
 
-        logger.info("Richiesta registrazione per username {}", username);
+logger.info("Richiesta registrazione per username {}", username);
 
-        // 2) Controllo se username o CF esistono già nel DB
-        if (esisteUsername(username)) {
-            view.mostraMessaggioErrore("Username già utilizzato, scegline un altro.");
-            logger.warn("Registrazione fallita: username {} già esistente", username);
-            return;
-        }
+// 2) Controllo se username o CF esistono già nel DB
+if (esisteUsername(username)) {
+view.mostraMessaggioErrore("Username già utilizzato, scegline un altro.");
+logger.warn("Registrazione fallita: username {} già esistente", username);
+return;
+}
 
-        if (esisteCF(cf)) {
-            view.mostraMessaggioErrore("Esiste già un cliente con questo codice fiscale.");
-            logger.warn("Registrazione fallita: CF {} già esistente", cf);
-            return;
-        }
+if (esisteCF(cf)) {
+view.mostraMessaggioErrore("Esiste già un cliente con questo codice fiscale.");
+logger.warn("Registrazione fallita: CF {} già esistente", cf);
+return;
+}
 
-        // 3) Parsing della data (stringa -> java.sql.Date)
-        Date dataSql;
-        try {
-            dataSql = Date.valueOf(dataNascita); // formato "yyyy-MM-dd"
-        } catch (IllegalArgumentException e) {
-            logger.error("Formato data non valido: {}", dataNascita);
-            view.mostraMessaggioErrore("Inserire la data nel formato corretto: yyyy-MM-dd");
-            return;
-        }
+// 3) Parsing della data (stringa -> java.sql.Date)
+Date dataSql;
+try {
+dataSql = Date.valueOf(dataNascita); // formato "yyyy-MM-dd"
+} catch (IllegalArgumentException e) {
+logger.error("Formato data non valido: {}", dataNascita);
+view.mostraMessaggioErrore("Inserire la data nel formato corretto: yyyy-MM-dd");
+return;
+}
 
-        // 4) Creazione dell'oggetto Cliente lato Java
-        Cliente nuovoCliente = new Cliente(
-                username,
-                password,
-                nome,
-                cognome,
-                cf,
-                luogoNascita,
-                dataSql,  // java.sql.Date estende java.util.Date, va bene per il costruttore
-                iban
-        );
+// 4) Creazione dell'oggetto Cliente lato Java
+Cliente nuovoCliente = new Cliente(
+username,
+password,
+nome,
+cognome,
+cf,
+luogoNascita,
+dataSql,
+iban
+);
 
-        // 5) Insert su tabella CLIENTE usando i getter dell'oggetto
-        String sql = "INSERT INTO CLIENTE " +
-                "(USERNAME, NOME, COGNOME, CF, LUOGO_NASCITA, DATA_NASCITA, IBAN, PASSWORD) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+// 5) Insert su tabella CLIENTE usando i getter dell'oggetto
+String sql = "INSERT INTO CLIENTE " +
+"(USERNAME, NOME, COGNOME, CF, LUOGO_NASCITA, DATA_NASCITA, IBAN, PASSWORD) " +
+"VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = GestioneDB.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+try (Connection conn = GestioneDB.getConnection();
+PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, nuovoCliente.getUsername());
-            ps.setString(2, nuovoCliente.getNome());
-            ps.setString(3, nuovoCliente.getCognome());
-            ps.setString(4, nuovoCliente.getCF());
-            ps.setString(5, nuovoCliente.getLuogoNascita());
-            ps.setDate  (6, new Date(nuovoCliente.getDataNascita().getTime()));
-            ps.setString(7, nuovoCliente.getIban());
-            ps.setString(8, nuovoCliente.getPassword());
+ps.setString(1, nuovoCliente.getUsername());
+ps.setString(2, nuovoCliente.getNome());
+ps.setString(3, nuovoCliente.getCognome());
+ps.setString(4, nuovoCliente.getCF());
+ps.setString(5, nuovoCliente.getLuogoNascita());
+ps.setDate  (6, new Date(nuovoCliente.getDataNascita().getTime()));
+ps.setString(7, nuovoCliente.getIban());
+ps.setString(8, nuovoCliente.getPassword());
 
-            int rows = ps.executeUpdate();
+int rows = ps.executeUpdate();
 
-            if (rows > 0) {
-                logger.info("Registrazione completata per {}", username);
-                view.mostraMessaggioInfo("Registrazione completata con successo!");
-                view.dispose();
-            } else {
-                logger.warn("Nessuna riga inserita per {}", username);
-                view.mostraMessaggioErrore(
-                        "Si è verificato un problema durante la registrazione.");
-            }
+if (rows > 0) {
+logger.info("Registrazione completata per {}", username);
+view.mostraMessaggioInfo("Registrazione completata con successo!");
 
-        } catch (SQLException e) {
-            logger.error("Errore durante la registrazione utente", e);
-            view.mostraMessaggioErrore(
-                    "Errore di database durante la registrazione.");
-        }
-    }
+// chiudo la finestra di registrazione
+view.dispose();
+
+// riapro la schermata di login (stesso comportamento di handleAnnulla)
+LoginView loginView = new LoginView();
+new LoginController(loginView);
+loginView.setVisible(true);
+
+} else {
+logger.warn("Nessuna riga inserita per {}", username);
+view.mostraMessaggioErrore(
+     "Si è verificato un problema durante la registrazione.");
+}
+
+} catch (SQLException e) {
+logger.error("Errore durante la registrazione utente", e);
+view.mostraMessaggioErrore(
+ "Errore di database durante la registrazione.");
+}
+}
 
     /**
      * Gestisce il click su "Annulla":

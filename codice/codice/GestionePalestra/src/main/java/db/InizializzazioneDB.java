@@ -425,7 +425,7 @@ public class InizializzazioneDB {
                 }
 
                 // fallback nel caso ci siano meno di 3 istruttori
-                int fallback = istr1 != -1 ? istr1 : istr2;
+                int fallback = istr1 != -1 ? istr1 : (istr2 != -1 ? istr2 : istr3);
 
                 String sqlInsLez =
                         "INSERT INTO LEZIONE_CORSO " +
@@ -434,48 +434,69 @@ public class InizializzazioneDB {
 
                 try (java.sql.PreparedStatement psL = conn.prepareStatement(sqlInsLez)) {
 
-                    java.time.LocalDate base = java.time.LocalDate.now().plusDays(1);
+                    java.time.LocalDate oggi = java.time.LocalDate.now();
 
-                    // Spinning - 3 lezioni
+                    // ===== Spinning - Lun-Mer-Ven 18:00 =====
                     if (idSpinning > 0) {
+                        java.time.LocalDate lun = next(oggi, java.time.DayOfWeek.MONDAY);
+                        java.time.LocalDate mer = next(oggi, java.time.DayOfWeek.WEDNESDAY);
+                        java.time.LocalDate ven = next(oggi, java.time.DayOfWeek.FRIDAY);
+
+                        // Lunedì
                         psL.setInt(1, idSpinning);
-                        psL.setDate(2, java.sql.Date.valueOf(base));
+                        psL.setDate(2, java.sql.Date.valueOf(lun));
                         psL.setTime(3, java.sql.Time.valueOf("18:00:00"));
-                        psL.setInt(4, 20);
+                        psL.setInt(4, 25); // capienza sala spinning
                         psL.setInt(5, istr1 != -1 ? istr1 : fallback);
                         psL.executeUpdate();
 
+                        // Mercoledì
                         psL.setInt(1, idSpinning);
-                        psL.setDate(2, java.sql.Date.valueOf(base.plusDays(2)));
+                        psL.setDate(2, java.sql.Date.valueOf(mer));
                         psL.setTime(3, java.sql.Time.valueOf("18:00:00"));
-                        psL.setInt(4, 20);
+                        psL.setInt(4, 25);
+                        psL.setInt(5, istr1 != -1 ? istr1 : fallback);
+                        psL.executeUpdate();
+
+                        // Venerdì
+                        psL.setInt(1, idSpinning);
+                        psL.setDate(2, java.sql.Date.valueOf(ven));
+                        psL.setTime(3, java.sql.Time.valueOf("18:00:00"));
+                        psL.setInt(4, 25);
                         psL.setInt(5, istr1 != -1 ? istr1 : fallback);
                         psL.executeUpdate();
                     }
 
-                    // Pilates - 2 lezioni
+                    // ===== Pilates - Mar-Gio 19:00 =====
                     if (idPilates > 0) {
+                        java.time.LocalDate mar = next(oggi, java.time.DayOfWeek.TUESDAY);
+                        java.time.LocalDate gio = next(oggi, java.time.DayOfWeek.THURSDAY);
+
+                        // Martedì
                         psL.setInt(1, idPilates);
-                        psL.setDate(2, java.sql.Date.valueOf(base.plusDays(1)));
+                        psL.setDate(2, java.sql.Date.valueOf(mar));
                         psL.setTime(3, java.sql.Time.valueOf("19:00:00"));
-                        psL.setInt(4, 15);
+                        psL.setInt(4, 20); // capienza sala pilates
                         psL.setInt(5, istr2 != -1 ? istr2 : fallback);
                         psL.executeUpdate();
 
+                        // Giovedì
                         psL.setInt(1, idPilates);
-                        psL.setDate(2, java.sql.Date.valueOf(base.plusDays(3)));
+                        psL.setDate(2, java.sql.Date.valueOf(gio));
                         psL.setTime(3, java.sql.Time.valueOf("19:00:00"));
-                        psL.setInt(4, 15);
+                        psL.setInt(4, 20);
                         psL.setInt(5, istr2 != -1 ? istr2 : fallback);
                         psL.executeUpdate();
                     }
 
-                    // AcquaGym - 1 lezione
+                    // ===== AcquaGym - Sab 10:00 =====
                     if (idAcquaGym > 0) {
+                        java.time.LocalDate sab = next(oggi, java.time.DayOfWeek.SATURDAY);
+
                         psL.setInt(1, idAcquaGym);
-                        psL.setDate(2, java.sql.Date.valueOf(base.plusDays(4)));
+                        psL.setDate(2, java.sql.Date.valueOf(sab));
                         psL.setTime(3, java.sql.Time.valueOf("10:00:00"));
-                        psL.setInt(4, 12);
+                        psL.setInt(4, 15); // capienza sala acquagym
                         psL.setInt(5, istr3 != -1 ? istr3 : fallback);
                         psL.executeUpdate();
                     }
@@ -511,5 +532,13 @@ public class InizializzazioneDB {
             }
         }
         return true;
+    }
+
+    // ========== Helper per trovare il "prossimo" giorno della settimana ==========
+    private static java.time.LocalDate next(java.time.LocalDate from,
+                                            java.time.DayOfWeek target) {
+        int diff = target.getValue() - from.getDayOfWeek().getValue();
+        if (diff <= 0) diff += 7; // sempre una data FUTURA
+        return from.plusDays(diff);
     }
 }

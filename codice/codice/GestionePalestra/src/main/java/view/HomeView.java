@@ -31,6 +31,9 @@ public class HomeView extends JFrame {
     private JButton btnDisdiciAbbonamento;
     private JButton btnLogout;
 
+    // NUOVO: bottone per panoramica palestra
+    private JButton btnPanoramicaPalestra;
+
     public HomeView(Cliente cliente) {
         this.cliente = cliente;
         initUI();
@@ -91,7 +94,7 @@ public class HomeView extends JFrame {
 
         header.add(centerHeader, BorderLayout.CENTER);
 
-     // pulsante Logout a destra (allineato in alto)
+        // pulsante Logout a destra (allineato in alto)
         btnLogout = creaBottoneSoloBordo("Logout");
         btnLogout.setPreferredSize(new Dimension(120, 36));
 
@@ -138,6 +141,9 @@ public class HomeView extends JFrame {
         btnVediCorsi          = creaBottoneSoloBordo("Vedi corsi");
         btnDisdiciAbbonamento = creaBottoneSoloBordo("Disdici abbonamento");
 
+        // NUOVO: bottone visione palestra
+        btnPanoramicaPalestra = creaBottoneArancione("Visione palestra");
+
         JPanel cardAbb = creaSectionPanel("Abbonamento");
         cardAbb.add(Box.createVerticalStrut(10));
         cardAbb.add(wrapButtonFullWidth(btnVediAbbonamento));
@@ -159,11 +165,19 @@ public class HomeView extends JFrame {
         cardCons.add(wrapButtonFullWidth(btnVediConsulenza));
         cardCons.add(Box.createVerticalStrut(4));
 
+        // NUOVO: sezione Palestra (panoramica sale / spa / corsi)
+        JPanel cardPalestra = creaSectionPanel("Palestra");
+        cardPalestra.add(Box.createVerticalStrut(10));
+        cardPalestra.add(wrapButtonFullWidth(btnPanoramicaPalestra));
+        cardPalestra.add(Box.createVerticalStrut(4));
+
         scrollContent.add(cardAbb);
         scrollContent.add(Box.createVerticalStrut(15));
         scrollContent.add(cardCorsi);
         scrollContent.add(Box.createVerticalStrut(15));
         scrollContent.add(cardCons);
+        scrollContent.add(Box.createVerticalStrut(15));
+        scrollContent.add(cardPalestra);
         scrollContent.add(Box.createVerticalGlue());
 
         JScrollPane scrollPane = new JScrollPane(
@@ -214,9 +228,14 @@ public class HomeView extends JFrame {
         btnLogout.addActionListener(e -> {
             if (controller != null) controller.handleLogout();
         });
+
+        // NUOVO: panoramica palestra
+        btnPanoramicaPalestra.addActionListener(e -> {
+            if (controller != null) controller.handlePanoramicaPalestra();
+        });
     }
 
- // ========== Logo helper ==========
+    // ========== Logo helper ==========
     private ImageIcon caricaLogo() {
         try {
             URL url = getClass().getClassLoader()
@@ -231,8 +250,6 @@ public class HomeView extends JFrame {
             return null;
         }
     }
-
-
 
     // visibilità/abilitazione corsi
     private void aggiornaVisibilitaCorsi() {
@@ -447,7 +464,6 @@ public class HomeView extends JFrame {
         dialog.setVisible(true);
     }
 
-
     public void mostraDettaglioConsulenza(String testoDettaglio) {
         // nascondo la Home mentre guardo le consulenze
         this.setVisible(false);
@@ -575,8 +591,6 @@ public class HomeView extends JFrame {
         dialog.setVisible(true);
     }
 
-
-
     public void mostraDettaglioCorsi(String testoDettaglio) {
         // nascondo la Home mentre guardo i corsi
         this.setVisible(false);
@@ -628,7 +642,7 @@ public class HomeView extends JFrame {
         center.add(scroll, BorderLayout.CENTER);
         main.add(center, BorderLayout.CENTER);
 
-     // ===== FOOTER con bottoni =====
+        // ===== FOOTER con bottoni =====
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
         footer.setBackground(DARK_BG);
         footer.setBorder(BorderFactory.createEmptyBorder(10, 0, 15, 0));
@@ -637,7 +651,7 @@ public class HomeView extends JFrame {
         JButton btnChiudi  = creaBottoneSoloBordo("Chiudi");
 
         // riduco la larghezza per farli stare affiancati
-        Dimension btnSize = new Dimension(180, 40); // o 160 se li vuoi più compatti
+        Dimension btnSize = new Dimension(180, 40);
         btnDisdici.setPreferredSize(btnSize);
         btnChiudi.setPreferredSize(btnSize);
 
@@ -698,7 +712,105 @@ public class HomeView extends JFrame {
         dialog.setVisible(true);
     }
 
+    // NUOVO: dialog per la panoramica palestra
+    public void mostraPanoramicaPalestra(String testoDettaglio) {
+        // nascondo la Home mentre guardo la panoramica
+        this.setVisible(false);
 
+        JDialog dialog = new JDialog(this, "Panoramica palestra", true);
+        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        dialog.setSize(420, 650);
+        dialog.setLocationRelativeTo(this);
+        dialog.setResizable(false);
+
+        JPanel main = new JPanel(new BorderLayout());
+        main.setBackground(DARK_BG);
+        dialog.setContentPane(main);
+
+        // HEADER
+        JPanel header = new JPanel();
+        header.setBackground(DARK_BG);
+        header.setBorder(BorderFactory.createEmptyBorder(15, 20, 10, 20));
+        header.setLayout(new BoxLayout(header, BoxLayout.Y_AXIS));
+
+        JLabel lblTitle = new JLabel("Panoramica palestra");
+        lblTitle.setForeground(ORANGE);
+        lblTitle.setFont(new Font("SansSerif", Font.BOLD, 20));
+        lblTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        header.add(lblTitle);
+        main.add(header, BorderLayout.NORTH);
+
+        // AREA TESTO con effetto scrittura
+        JTextArea txt = new JTextArea();
+        txt.setEditable(false);
+        txt.setLineWrap(true);
+        txt.setWrapStyleWord(true);
+        txt.setBackground(CARD_BG);
+        txt.setForeground(Color.WHITE);
+        txt.setFont(new Font("SansSerif", Font.PLAIN, 13));
+        txt.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+
+        final String fullText = testoDettaglio != null ? testoDettaglio : "";
+        txt.setText("");
+
+        JScrollPane scroll = new JScrollPane(txt);
+        scroll.setBorder(BorderFactory.createLineBorder(new Color(70, 70, 70)));
+        scroll.getViewport().setBackground(CARD_BG);
+
+        JPanel center = new JPanel(new BorderLayout());
+        center.setBackground(DARK_BG);
+        center.setBorder(BorderFactory.createEmptyBorder(0, 20, 10, 20));
+        center.add(scroll, BorderLayout.CENTER);
+        main.add(center, BorderLayout.CENTER);
+
+        // FOOTER con solo "Chiudi"
+        JPanel footer = new JPanel();
+        footer.setBackground(DARK_BG);
+        footer.setBorder(BorderFactory.createEmptyBorder(10, 0, 15, 0));
+
+        JButton btnChiudi = creaBottoneSoloBordo("Chiudi");
+        btnChiudi.addActionListener(e -> dialog.dispose());
+        footer.add(btnChiudi);
+
+        main.add(footer, BorderLayout.SOUTH);
+
+        // typing effect
+        final Timer[] timerRef = new Timer[1];
+        timerRef[0] = new Timer(18, e -> {
+            if (!dialog.isShowing()) {
+                timerRef[0].stop();
+                return;
+            }
+            int lenCorrente = txt.getText().length();
+            if (lenCorrente < fullText.length()) {
+                txt.append(String.valueOf(fullText.charAt(lenCorrente)));
+                txt.setCaretPosition(txt.getDocument().getLength());
+            } else {
+                timerRef[0].stop();
+            }
+        });
+
+        dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosed(java.awt.event.WindowEvent e) {
+                if (timerRef[0] != null && timerRef[0].isRunning()) {
+                    timerRef[0].stop();
+                }
+                HomeView.this.setVisible(true);
+            }
+
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                if (timerRef[0] != null && timerRef[0].isRunning()) {
+                    timerRef[0].stop();
+                }
+            }
+        });
+
+        timerRef[0].start();
+        dialog.setVisible(true);
+    }
 
     public void mostraMessaggioInfo(String msg) {
         ThemedDialog.showMessage(this, "Info", msg, false);

@@ -31,6 +31,14 @@ public class PrenotaCorsoController {
 
     private void caricaCorsi() {
         try {
+            // 1) prima di tutto aggiorno le date delle lezioni al presente/futuro
+            CorsoDAO.aggiornaDateLezioniAllaSettimanaCorrente();
+        } catch (Exception e) {
+            // se fallisce non blocco tutto, ma lo loggo
+            e.printStackTrace();
+        }
+
+        try {
             corsi.clear();
             corsi.addAll(CorsoDAO.getTuttiICorsi());
 
@@ -56,7 +64,6 @@ public class PrenotaCorsoController {
                     true);
         }
     }
-
     /** Chiamato dalla view quando l’utente cambia selezione corso. */
     public void handleCorsoSelezionato(int index) {
         if (index < 0 || index >= corsi.size()) {

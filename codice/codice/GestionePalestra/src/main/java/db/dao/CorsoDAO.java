@@ -3,11 +3,16 @@ package db.dao;
 import db.GestioneDB;
 
 import java.sql.*;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class CorsoDAO {
 
@@ -99,6 +104,96 @@ public class CorsoDAO {
         }
     }
 
+    // ===================== UTILITY PER DESCRIZIONE PROGRAMMAZIONE =====================
+
+    private static String abbreviazioneGiorno(DayOfWeek d) {
+        switch (d) {
+            case MONDAY:    return "Lun";
+            case TUESDAY:   return "Mar";
+            case WEDNESDAY: return "Mer";
+            case THURSDAY:  return "Gio";
+            case FRIDAY:    return "Ven";
+            case SATURDAY:  return "Sab";
+            case SUNDAY:    return "Dom";
+            default:        return d.toString();
+        }
+    }
+
+    /**
+     * Costruisce una descrizione compatta della programmazione di un corso,
+     * del tipo:
+     *    "Lun-Mer-Ven 18:00"
+     * oppure, se ci sono orari diversi:
+     *    "Lun-Mer 18:00 / Ven 19:00"
+     *
+     * Legge la tabella LEZIONE_CORSO, quindi è sempre coerente
+     * con le lezioni effettivamente prenotabili.
+     */
+    public static String buildDescrizioneProgrammazioneCorso(int idCorso) throws Exception {
+        String sql =
+                "SELECT DATA_LEZIONE, ORA_LEZIONE " +
+                "FROM LEZIONE_CORSO " +
+                "WHERE ID_CORSO = ? " +
+                "ORDER BY DATA_LEZIONE, ORA_LEZIONE";
+
+        // mappa: ora -> lista di abbreviazioni dei giorni (Lun, Mer, ...)
+        Map<LocalTime, List<String>> byOra = new LinkedHashMap<>();
+
+        try (Connection conn = GestioneDB.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, idCorso);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                boolean any = false;
+
+                while (rs.next()) {
+                    any = true;
+
+                    LocalDate data = rs.getDate("DATA_LEZIONE").toLocalDate();
+                    LocalTime ora  = rs.getTime("ORA_LEZIONE").toLocalTime();
+                    DayOfWeek dow  = data.getDayOfWeek();
+
+                    String giorno = abbreviazioneGiorno(dow);
+
+                    byOra.computeIfAbsent(ora, k -> new ArrayList<>())
+                         .add(giorno);
+                }
+
+                if (!any) {
+                    return "Nessuna lezione programmata.";
+                }
+            }
+        }
+
+        StringBuilder sb = new StringBuilder();
+        boolean firstTime = true;
+
+        for (Map.Entry<LocalTime, List<String>> entry : byOra.entrySet()) {
+            if (!firstTime) {
+                sb.append(" / ");   // separatore tra orari diversi
+            }
+            firstTime = false;
+
+            LocalTime ora = entry.getKey();
+            List<String> giorni = entry.getValue();
+
+            // elimino eventuali duplicati mantenendo l'ordine
+            Set<String> unique = new LinkedHashSet<>(giorni);
+            String giorniStr = String.join("-", unique);
+
+            // formatto ora come HH:MM
+            String oraStr = ora.toString();
+            if (oraStr.length() > 5) {
+                oraStr = oraStr.substring(0, 5); // es. "18:00:00" -> "18:00"
+            }
+
+            sb.append(giorniStr).append(" ").append(oraStr);
+        }
+
+        return sb.toString();
+    }
+
     // ===================== CORSI E LEZIONI =====================
 
     /** Restituisce tutti i corsi disponibili. */
@@ -124,7 +219,7 @@ public class CorsoDAO {
         return result;
     }
 
-    /** Restituisce le lezioni previste per un corso. */
+    /** Restituisce SOLO le lezioni future previste per un corso. */
     public static List<LezioneInfo> getLezioniPerCorso(int idCorso) throws Exception {
         String sql =
                 "SELECT L.ID_LEZIONE, L.ID_CORSO, L.DATA_LEZIONE, L.ORA_LEZIONE, " +
@@ -137,6 +232,7 @@ public class CorsoDAO {
                 "ORDER BY L.DATA_LEZIONE, L.ORA_LEZIONE";
 
         List<LezioneInfo> result = new ArrayList<>();
+        LocalDate oggi = LocalDate.now();
 
         try (Connection conn = GestioneDB.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -147,11 +243,17 @@ public class CorsoDAO {
                 while (rs.next()) {
                     int idLezione = rs.getInt("ID_LEZIONE");
                     LocalDate data = rs.getDate("DATA_LEZIONE").toLocalDate();
-                    LocalTime ora = rs.getTime("ORA_LEZIONE").toLocalTime();
-                    int postiTot = rs.getInt("POSTI_TOTALI");
-                    int postiPren = rs.getInt("POSTI_PRENOTATI");
-                    int durata = rs.getInt("DURATA_MINUTI");
+                    LocalTime ora  = rs.getTime("ORA_LEZIONE").toLocalTime();
+                    int postiTot   = rs.getInt("POSTI_TOTALI");
+                    int postiPren  = rs.getInt("POSTI_PRENOTATI");
+                    int durata     = rs.getInt("DURATA_MINUTI");
                     String nomeIstr = rs.getString("NOME") + " " + rs.getString("COGNOME");
+
+                    // Se la data è nel passato o oggi, la porto avanti di settimane
+                    // finché non è strettamente > oggi, mantenendo il giorno della settimana.
+                    while (!data.isAfter(oggi)) {
+                        data = data.plusWeeks(1);
+                    }
 
                     result.add(new LezioneInfo(
                             idLezione, idCorso, data, ora,
@@ -163,6 +265,46 @@ public class CorsoDAO {
 
         return result;
     }
+    
+    /**
+     * Porta in avanti le date delle lezioni finché non sono nel presente/futuro.
+     * Mantiene lo stesso giorno della settimana, aggiungendo settimane.
+     *
+     * Esempio: una lezione del 2025-11-18 (Martedì) diventa 2025-11-25,
+     * poi 2025-12-02, ... finché DATA_LEZIONE >= oggi.
+     */
+    public static void aggiornaDateLezioniAllaSettimanaCorrente() throws Exception {
+        String sqlSelect = "SELECT ID_LEZIONE, DATA_LEZIONE FROM LEZIONE_CORSO";
+        String sqlUpdate = "UPDATE LEZIONE_CORSO SET DATA_LEZIONE = ? WHERE ID_LEZIONE = ?";
+
+        LocalDate oggi = LocalDate.now();
+
+        try (Connection conn = GestioneDB.getConnection();
+             PreparedStatement psSel = conn.prepareStatement(sqlSelect);
+             ResultSet rs = psSel.executeQuery();
+             PreparedStatement psUpd = conn.prepareStatement(sqlUpdate)) {
+
+            while (rs.next()) {
+                int idLez = rs.getInt("ID_LEZIONE");
+                LocalDate dataOriginale = rs.getDate("DATA_LEZIONE").toLocalDate();
+                LocalDate dataNuova = dataOriginale;
+
+                // finché è nel passato, sposto avanti di 1 settimana
+                while (dataNuova.isBefore(oggi)) {
+                    dataNuova = dataNuova.plusWeeks(1);
+                }
+
+                if (!dataNuova.equals(dataOriginale)) {
+                    psUpd.setDate(1, Date.valueOf(dataNuova));
+                    psUpd.setInt(2, idLez);
+                    psUpd.addBatch();
+                }
+            }
+
+            psUpd.executeBatch();
+        }
+    }
+
 
     // ===================== CONFLITTI E ISCRIZIONI =====================
 
@@ -460,7 +602,6 @@ public class CorsoDAO {
 
         return sb.toString();
     }
-
 
     /** Ritorna true se esiste almeno un corso nel catalogo. */
     public static boolean esistonoCorsi() throws Exception {

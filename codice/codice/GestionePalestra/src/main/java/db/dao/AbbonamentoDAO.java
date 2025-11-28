@@ -128,30 +128,56 @@ public class AbbonamentoDAO {
 
     /**
      * Disdice l'abbonamento di un cliente / ID_CLIENTE esplicito.
-     * (rimane per eventuale uso futuro)
+     * Elimina anche pagamenti, iscrizioni ai corsi e consulenze
+     * collegate a quel cliente.
      */
     public static void disdiciAbbonamentoPerCliente(int idCliente) {
+
+        // elimina iscrizioni corsi del cliente
+        String sqlDeleteIscrizioniCorsi =
+                "DELETE FROM ISCRIZIONE_CORSO WHERE ID_CLIENTE = ?";
+
+        // elimina consulenze del cliente
+        String sqlDeleteConsulenze =
+                "DELETE FROM CONSULENZA WHERE ID_CLIENTE = ?";
+
+        // elimina pagamenti legati ai suoi abbonamenti
         String sqlDeletePagamenti =
                 "DELETE FROM PAGAMENTO WHERE ID_CLIENTE = ? " +
                 "AND ID_ABBONAMENTO IN (SELECT ID_ABBONAMENTO FROM ABBONAMENTO WHERE ID_CLIENTE = ?)";
+
+        // elimina abbonamenti del cliente
         String sqlDeleteAbbonamenti =
                 "DELETE FROM ABBONAMENTO WHERE ID_CLIENTE = ?";
 
         try (Connection conn = GestioneDB.getConnection()) {
             conn.setAutoCommit(false);
 
-            try (PreparedStatement ps1 = conn.prepareStatement(sqlDeletePagamenti);
-                 PreparedStatement ps2 = conn.prepareStatement(sqlDeleteAbbonamenti)) {
+            try (PreparedStatement psCorsi = conn.prepareStatement(sqlDeleteIscrizioniCorsi);
+                 PreparedStatement psCons  = conn.prepareStatement(sqlDeleteConsulenze);
+                 PreparedStatement ps1     = conn.prepareStatement(sqlDeletePagamenti);
+                 PreparedStatement ps2     = conn.prepareStatement(sqlDeleteAbbonamenti)) {
 
+                // 1) cancello tutte le iscrizioni ai corsi del cliente
+                psCorsi.setInt(1, idCliente);
+                psCorsi.executeUpdate();
+
+                // 2) cancello tutte le consulenze del cliente
+                psCons.setInt(1, idCliente);
+                psCons.executeUpdate();
+
+                // 3) cancello i pagamenti legati ai suoi abbonamenti
                 ps1.setInt(1, idCliente);
                 ps1.setInt(2, idCliente);
                 ps1.executeUpdate();
 
+                // 4) cancello gli abbonamenti del cliente
                 ps2.setInt(1, idCliente);
                 ps2.executeUpdate();
 
                 conn.commit();
-                logger.info("Abbonamento e pagamenti disdetti per cliente {}", idCliente);
+                logger.info("Abbonamento, pagamenti, corsi e consulenze disdetti per cliente {}",
+                        idCliente);
 
             } catch (SQLException e) {
                 conn.rollback();
@@ -167,8 +193,26 @@ public class AbbonamentoDAO {
 
     /**
      * Disdice l'abbonamento partendo dall'USERNAME del cliente.
+     * Elimina anche pagamenti, iscrizioni ai corsi e consulenze
+     * collegate a quel cliente.
      */
     public static void disdiciAbbonamentoPerUsername(String username) {
+
+        // elimina iscrizioni ai corsi del cliente
+        String sqlDeleteIscrizioniCorsi =
+                "DELETE FROM ISCRIZIONE_CORSO " +
+                "WHERE ID_CLIENTE IN (" +
+                "   SELECT ID_CLIENTE FROM CLIENTE WHERE USERNAME = ?" +
+                ")";
+
+        // elimina consulenze del cliente
+        String sqlDeleteConsulenze =
+                "DELETE FROM CONSULENZA " +
+                "WHERE ID_CLIENTE IN (" +
+                "   SELECT ID_CLIENTE FROM CLIENTE WHERE USERNAME = ?" +
+                ")";
+
+        // elimina pagamenti legati agli abbonamenti del cliente
         String sqlDeletePagamenti =
                 "DELETE FROM PAGAMENTO " +
                 "WHERE ID_ABBONAMENTO IN (" +
@@ -178,6 +222,7 @@ public class AbbonamentoDAO {
                 "   WHERE C.USERNAME = ?" +
                 ")";
 
+        // elimina abbonamenti del cliente
         String sqlDeleteAbbonamenti =
                 "DELETE FROM ABBONAMENTO " +
                 "WHERE ID_CLIENTE IN (" +
@@ -187,17 +232,30 @@ public class AbbonamentoDAO {
         try (Connection conn = GestioneDB.getConnection()) {
             conn.setAutoCommit(false);
 
-            try (PreparedStatement ps1 = conn.prepareStatement(sqlDeletePagamenti);
-                 PreparedStatement ps2 = conn.prepareStatement(sqlDeleteAbbonamenti)) {
+            try (PreparedStatement psCorsi = conn.prepareStatement(sqlDeleteIscrizioniCorsi);
+                 PreparedStatement psCons  = conn.prepareStatement(sqlDeleteConsulenze);
+                 PreparedStatement ps1     = conn.prepareStatement(sqlDeletePagamenti);
+                 PreparedStatement ps2     = conn.prepareStatement(sqlDeleteAbbonamenti)) {
 
+                // 1) iscrizioni corsi
+                psCorsi.setString(1, username);
+                psCorsi.executeUpdate();
+
+                // 2) consulenze
+                psCons.setString(1, username);
+                psCons.executeUpdate();
+
+                // 3) pagamenti
                 ps1.setString(1, username);
                 ps1.executeUpdate();
 
+                // 4) abbonamenti
                 ps2.setString(1, username);
                 ps2.executeUpdate();
 
                 conn.commit();
-                logger.info("Abbonamento (e pagamenti) disdetti per username {}", username);
+                logger.info("Abbonamento (e pagamenti, corsi, consulenze) disdetti per username {}",
+                        username);
 
             } catch (SQLException e) {
                 conn.rollback();
