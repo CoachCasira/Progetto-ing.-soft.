@@ -32,7 +32,7 @@ class AbbonamentoFactoryTest {
     @Test
     void creaDaTipo_corsiRitornaAbbonamentoCorsi() {
         Abbonamento abb = Abbonamento.creaDaTipo("CORSI", 1);
-
+ 
         assertNotNull(abb, "La factory non deve ritornare null per CORSI");
         assertTrue(abb instanceof AbbonamentoCorsi,
                 "Per tipo CORSI mi aspetto un AbbonamentoCorsi");
